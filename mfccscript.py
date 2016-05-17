@@ -49,7 +49,7 @@ def mfccMaker(folderPath, minFreq, maxFreq, blockSize, stepSize):
 		mfccFileName[-1] = 'y'
 		mfccFileName = "".join(mfccFileName)
 
-		np.save("../../../features/input/"+mfccFileName, feats['mfcc'])
+		np.save("/home/jelmer/features/input/"+mfccFileName, feats['mfcc'])
 
 def main():
     args = sys.argv[1:]
