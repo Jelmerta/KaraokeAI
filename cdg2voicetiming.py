@@ -20,7 +20,7 @@ CDG_MASK 					= 0x3F
 
 CDG_PACKETS_PER_SECOND 		= 300
 
-DEBUG = 1
+DEBUG = 0
 		
 class Instruction():
 	def __init__(self, packetCount, x, y, color):
@@ -75,7 +75,9 @@ class Sequence():
 			if(DEBUG):
 				debugMessage += 'Debug sequence ' + str(self.index) + ': This sequence seems too contain vocals\n'
 		
-		print debugMessage
+		if(DEBUG):
+			print debugMessage
+			
 		return containsVocalsBool
 		
 	def classifyInstructions(self):
@@ -91,8 +93,9 @@ class Sequence():
 		
 class cdgPlayer:
 	# Initialise the player instance
-	def __init__(self, cdgFileName):
+	def __init__(self, cdgFileName, interval):
 		self.FileName = cdgFileName
+		self.interval = float(interval)
 		FilePath = os.path.realpath(__file__)
 		FileSize = os.path.getsize(FilePath)
 		
@@ -112,7 +115,7 @@ class cdgPlayer:
 			raise NoSuchFile
 			return
 
-		self.decode()
+		self.labelFound = self.decode()
 
 	def decode(self):
 		# Open the cdg file
@@ -134,23 +137,29 @@ class cdgPlayer:
 					print 'empty sequence'
 				self.sequenceCount = self.sequenceCount + 1
 			else:
-				featureVector = self.getFeatureVector(allClassifiedInstructions, 0.1)
+				self.cdgFile.close()
+				if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
+					featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)					
+					writeFileName = list(self.FileName)
+					writeFileName[-3] = "l"
+					writeFileName[-2] = "b"
+					writeFileName[-1] = "l"
+					self.writeToFile("".join(writeFileName), featureVector)					
+					return True					
+				else:
+					if(DEBUG):
+						print 'No correct label found, exiting'
+					return False
 				if(DEBUG):
 					np.set_printoptions(threshold=np.nan)
 					print featureVector
-				self.cdgFile.close()
 				
-				writeFileName = list(self.FileName)
-				writeFileName[-3] = "l"
-				writeFileName[-2] = "b"
-				writeFileName[-1] = "l"
-				self.writeToFile("".join(writeFileName), featureVector)
-				return
+		return False
 				
 	def writeToFile(self, fileName, list):
 		with open(fileName, 'w') as f:
 			f.write("".join(str(item) for item in list))
-				
+		
 	def getFileSize(self):
 		statinfo = os.stat(self.FileName)
 		return statinfo.st_size
@@ -284,9 +293,13 @@ class cdgPlayer:
 			
 def main():
 	args = sys.argv[1:]
-	if (len(sys.argv) != 2):
+	if (len(sys.argv) != 3):
 		sys.exit(2)
-	player = cdgPlayer(sys.argv[1])
+	player = cdgPlayer(sys.argv[1], sys.argv[2])
+	if player.labelFound:
+		sys.exit(0)
+	else:
+		sys.exit(1)
 
 if __name__ == "__main__":
     main()
