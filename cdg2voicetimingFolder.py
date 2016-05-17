@@ -14,7 +14,7 @@ def main():
 	correctCount = 0
 	fileCount = 0
 	for file in glob.glob("*.cdg"):
-		call = "python cdg2voicetiming.py \"" + file + "\"" + " " + interval
+		call = "python ../../../KaraokeAI/cdg2voicetiming.py \"" + file + "\"" + " " + interval
 		if(subprocess.call(call, shell=True) == 0):
 			correctCount += 1
 		fileCount += 1
