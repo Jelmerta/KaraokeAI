@@ -26,10 +26,10 @@ import numpy as np
 
 # All the other variables remain default and probably don't need changing
 
-def mfccMaker(folderPath, minFreq, maxFreq, blockSize, stepSize):
+def mfccMaker(folderPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 	os.chdir(folderPath)
 
-	fp = FeaturePlan()
+	fp = FeaturePlan(sample_rate=sampleRate)
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 
 	
@@ -74,7 +74,7 @@ def mfccMaker(folderPath, minFreq, maxFreq, blockSize, stepSize):
 
 def main():
     args = sys.argv[1:]
-    mfccMaker(args[0], args[1], args[2], args[3], args[4])
+    mfccMaker(args[0], args[1], args[2], args[3], args[4], args[5])
 
 if __name__ == "__main__":
     main()
