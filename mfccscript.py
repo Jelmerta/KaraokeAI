@@ -4,7 +4,7 @@ import glob
 from yaafelib import *
 import os
 import sys
-import numpy
+import numpy as np
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -37,25 +37,19 @@ def mfccMaker(folderPath, minFreq, maxFreq, blockSize, stepSize):
 	engine.load(df)
 	engine.getInputs()
 	
-	afp = audioFileProcessor()
+	afp = AudioFileProcessor()
 
 	for file in glob.glob("*.mp3"):
-		# Special characters need to get a \ in front of them to work on the command line, probably more need to be added
-		file = file.replace(" ", "\ ")
-		file = file.replace("-", "\-")
-		file = file.replace("&", "\&")
-		file = file.replace(")", "\)")
-		file = file.replace("(", "\(")
-
 		afp.processFile(engine, file)
 
 		feats = engine.readAllOutputs()
-		datar = feats['mfcc']
-		print datar
-		
+		mfccFileName = list(file)
+		mfccFileName[-3] = 'n'
+		mfccFileName[-2] = 'p'
+		mfccFileName[-1] = 'y'
+		mfccFileName = "".join(mfccFileName)
 
-        #call = "yaafe.py -r 44100 -f \"mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\" " + file
-        #subprocess.call(call, shell=True)
+		np.save("../features/input/"+mfccFileName, feats['mfcc'])
 
 def main():
     args = sys.argv[1:]
