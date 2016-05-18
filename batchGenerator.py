@@ -5,42 +5,48 @@ import os
 import sys
 import random
 import numpy as np
-import warnings
+#import warnings
 
-warnings.simplefilter("ignore")
+#warnings.simplefilter("ignore")
 	
 MEL_FEATURE_AMOUNT = 13
 DEBUG = 0
 	
 def main():
-	if (len(sys.argv) != 3):
+	if (len(sys.argv) != 4):
 		print 'Incorrect amount of parameters'
 		sys.exit(2)
 	
-	# Example call: python batchGenerator.py . 32
-	folderPath = sys.argv[1]
-	batchSize = int(sys.argv[2])
+	# Example call: python batchGenerator.py MFCCFolderPath labelFolderPath 32
+	MFCCFolderPath = sys.argv[1]
+	labelFolderPath = sys.argv[2]
+	batchSize = int(sys.argv[3])
 	
-	os.chdir(folderPath)
-	labelFiles = glob.glob("*.lbl")
-
-	return getBatch(labelFiles, batchSize)
+	return getBatch(MFCCFolderPath, labelFolderPath, batchSize)
 	
-def getBatch(labelFiles, batchSize):
+def getBatch(MFCCFolderPath, labelFolderPath, batchSize):
+	labelFiles = glob.glob(labelFolderPath + "/*.lbl")
 	batch = np.zeros((int(batchSize), MEL_FEATURE_AMOUNT+1))
 	trainingExampleIndex = 0
 	
 	while trainingExampleIndex < batchSize:
 		randomLabelFileName = random.choice(labelFiles)
-		randomMFCCFileName = randomLabelFileName.replace("lbl", "mp3.mfcc.csv")
+		
+		index = randomLabelFileName.rfind("/")
+		randomMFCCFileName = list(MFCCFolderPath) + list("/") + list(self.randomLabelFileName[index+1:])
+		randomMFCCFileName = randomMFCCFileName.replace("lbl", "npy")
 
 		if os.path.isfile(randomLabelFileName):
-			MFCCMatrix = np.genfromtxt(randomMFCCFileName, delimiter=',', usecols=np.arange(0, 13), invalid_raise=False)
+			if os.path.isfile(randomMFCCFileName):
+				MFCCMatrix = np.load(randomMFCCFileName)
+			else:
+				continue
 			
 			labelFile = open(randomLabelFileName, "r+")
 			labelList = [char for char in labelFile.readline()]
 			
 			labelAmount = statinfo = os.stat(randomLabelFileName).st_size
+			print str(MFCCMatrix.shape) + " " + str(labelAmount)
 			randomLabelIndex = random.randint(0,labelAmount-2)
 			
 			batch[trainingExampleIndex] = np.append(MFCCMatrix[randomLabelIndex], labelList[randomLabelIndex])
