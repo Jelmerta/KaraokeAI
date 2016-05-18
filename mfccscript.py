@@ -2,9 +2,10 @@
 
 import glob
 from yaafelib import *
+#from pydub.utils import mediainfo
 import os
 import sys
-import numpy
+import numpy as np
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -25,41 +26,55 @@ import numpy
 
 # All the other variables remain default and probably don't need changing
 
-def mfccMaker(folderPath, minFreq, maxFreq, blockSize, stepSize):
+def mfccMaker(folderPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 	os.chdir(folderPath)
-	
-	fp = FeaturePlan(sample_rate=44100)
+
+	fp = FeaturePlan(sample_rate=sampleRate)
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
+
+	
 	df = fp.getDataFlow()
 	#df.display()
 	
 	engine = Engine()
 	engine.load(df)
 	engine.getInputs()
+
+#	fp2 = FeaturePlan(sample_rate=48000)
+#	fp2.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
+
+#	df2 = fp2.getDataFlow()
+	#df.display()
 	
-	afp = audioFileProcessor()
+#	engine2 = Engine()
+#	engine2.load(df2)
+#	engine2.getInputs()
+	
+	afp = AudioFileProcessor()
 
 	for file in glob.glob("*.mp3"):
-		# Special characters need to get a \ in front of them to work on the command line, probably more need to be added
-		file = file.replace(" ", "\ ")
-		file = file.replace("-", "\-")
-		file = file.replace("&", "\&")
-		file = file.replace(")", "\)")
-		file = file.replace("(", "\(")
-
+#		info = mediainfo(file)
+#		sample_rate = info['sample_rate']
+#		if sample_rate == 44100:
 		afp.processFile(engine, file)
-
 		feats = engine.readAllOutputs()
-		datar = feats['mfcc']
-		print datar
-		
+#		elif sample_rate == 48000:
+#			afp.processFile(engine2, file)
+#			feats = engine2.readAllOutputs()
+#		else:
+#			print 'incorrect sample rate'
 
-        #call = "yaafe.py -r 44100 -f \"mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\" " + file
-        #subprocess.call(call, shell=True)
+		mfccFileName = list(file)
+		mfccFileName[-3] = 'n'
+		mfccFileName[-2] = 'p'
+		mfccFileName[-1] = 'y'
+		mfccFileName = "".join(mfccFileName)
+
+		np.save("/home/jelmer/features/input/"+mfccFileName, feats['mfcc'])
 
 def main():
     args = sys.argv[1:]
-    mfccMaker(args[0], args[1], args[2], args[3], args[4])
+    mfccMaker(args[0], args[1], args[2], args[3], args[4], args[5])
 
 if __name__ == "__main__":
     main()
