@@ -11,7 +11,6 @@ def main():
 	outputFolderPath = sys.argv[2]
 	interval = sys.argv[3]
 	
-	#os.chdir(folderPath)
 	correctCount = 0
 	fileCount = 0
 		
