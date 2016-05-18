@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import glob
+from yaafelib import *
 import os
 import sys
-import subprocess
+import numpy
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -25,18 +26,36 @@ import subprocess
 # All the other variables remain default and probably don't need changing
 
 def mfccMaker(folderPath, minFreq, maxFreq, blockSize, stepSize):
-    os.chdir(folderPath)
+	os.chdir(folderPath)
+	
+	fp = FeaturePlan(sample_rate=44100)
+	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
+	df = fp.getDataFlow()
+	#df.display()
+	
+	engine = Engine()
+	engine.load(df)
+	engine.getInputs()
+	
+	afp = audioFileProcessor()
 
-    for file in glob.glob("*.mp3"):
-        # Special characters need to get a \ in front of them to work on the command line, probably more need to be added
-        file = file.replace(" ", "\ ")
-        file = file.replace("-", "\-")
-        file = file.replace("&", "\&")
-        file = file.replace(")", "\)")
-        file = file.replace("(", "\(")
+	for file in glob.glob("*.mp3"):
+		# Special characters need to get a \ in front of them to work on the command line, probably more need to be added
+		file = file.replace(" ", "\ ")
+		file = file.replace("-", "\-")
+		file = file.replace("&", "\&")
+		file = file.replace(")", "\)")
+		file = file.replace("(", "\(")
 
-        call = "yaafe.py -r 44100 -f \"mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\" " + file
-        subprocess.call(call, shell=True)
+		afp.processFile(engine, file)
+
+		feats = engine.readAllOutputs()
+		datar = feats['mfcc']
+		print datar
+		
+
+        #call = "yaafe.py -r 44100 -f \"mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\" " + file
+        #subprocess.call(call, shell=True)
 
 def main():
     args = sys.argv[1:]
