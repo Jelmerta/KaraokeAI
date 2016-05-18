@@ -141,8 +141,8 @@ class cdgPlayer:
 				self.cdgFile.close()
 				if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
 					featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
-					index = self.FileName.find("\\")
-					writeFileName = list(self.outputFilePath) + list("\\") + list(self.FileName[index+1:])
+					index = self.FileName.rfind("/")
+					writeFileName = list(self.outputFilePath) + list("/") + list(self.FileName[index+1:])
 					writeFileName[-3] = "l"
 					writeFileName[-2] = "b"
 					writeFileName[-1] = "l"
