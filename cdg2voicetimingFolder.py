@@ -16,7 +16,7 @@ def main():
 	fileCount = 0
 		
 	print folderPath + "\\*.cdg"
-	for file in glob.glob(folderPath + "\\*.cdg"):
+	for file in glob.glob(folderPath + "\/*.cdg"):
 		print file
 		call = "python cdg2voicetiming.py \"" + file + "\" \"" + outputFolderPath + "\" " + interval
 		print call
