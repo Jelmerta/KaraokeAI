@@ -93,8 +93,9 @@ class Sequence():
 		
 class cdgPlayer:
 	# Initialise the player instance
-	def __init__(self, cdgFileName, interval):
+	def __init__(self, cdgFileName, outputFilePath, interval):
 		self.FileName = cdgFileName
+		self.outputFilePath = outputFilePath
 		self.interval = float(interval)
 		FilePath = os.path.realpath(__file__)
 		FileSize = os.path.getsize(FilePath)
@@ -139,8 +140,9 @@ class cdgPlayer:
 			else:
 				self.cdgFile.close()
 				if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
-					featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)					
-					writeFileName = list(self.FileName)
+					featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
+					index = self.FileName.find("\\")
+					writeFileName = list(self.outputFilePath) + list("\\") + list(self.FileName[index+1:])
 					writeFileName[-3] = "l"
 					writeFileName[-2] = "b"
 					writeFileName[-1] = "l"
@@ -293,9 +295,9 @@ class cdgPlayer:
 			
 def main():
 	args = sys.argv[1:]
-	if (len(sys.argv) != 3):
+	if (len(sys.argv) != 4):
 		sys.exit(2)
-	player = cdgPlayer(sys.argv[1], sys.argv[2])
+	player = cdgPlayer(sys.argv[1], sys.argv[2], sys.argv[3])
 	if player.labelFound:
 		sys.exit(0)
 	else:
