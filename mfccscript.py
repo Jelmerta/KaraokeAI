@@ -25,12 +25,10 @@ import numpy as np
 
 # All the other variables remain default and probably don't need changing
 
-def mfccMaker(folderPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
-	os.chdir(folderPath)
+def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 
 	fp = FeaturePlan(sample_rate=sampleRate)
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
-
 	
 	df = fp.getDataFlow()
 	#df.display()
@@ -40,22 +38,20 @@ def mfccMaker(folderPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 	engine.getInputs()
 
 	afp = AudioFileProcessor()
-
-	for file in glob.glob("*.mp3"):
+	for file in glob.glob(folderPath + "/*.mp3"):
 		afp.processFile(engine, file)
 		feats = engine.readAllOutputs()
 
-		mfccFileName = list(file)
+		index = file.rfind("/")
+		mfccFileName = list(file[index+1:])
 		mfccFileName[-3] = 'n'
 		mfccFileName[-2] = 'p'
 		mfccFileName[-1] = 'y'
-		mfccFileName = "".join(mfccFileName)
-
-		np.save("/home/jelmer/features/input/"+mfccFileName, feats['mfcc'])
+		np.save("".join(list(outputPath) + list("/") + mfccFileName), feats['mfcc']) # "/home/jelmer/features/input/"
 
 def main():
     args = sys.argv[1:]
-    mfccMaker(args[0], args[1], args[2], args[3], args[4], args[5])
+    mfccMaker(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
 
 if __name__ == "__main__":
     main()

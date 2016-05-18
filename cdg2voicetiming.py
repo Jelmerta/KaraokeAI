@@ -6,7 +6,6 @@ import struct
 import numpy as np
 import math
 from bisect import bisect_left
-from scipy import ndimage
 
 # CDG Command Code
 CDG_COMMAND 				= 0x09

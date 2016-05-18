@@ -5,9 +5,6 @@ import os
 import sys
 import random
 import numpy as np
-#import warnings
-
-#warnings.simplefilter("ignore")
 	
 MEL_FEATURE_AMOUNT = 13
 DEBUG = 0
@@ -33,8 +30,11 @@ def getBatch(MFCCFolderPath, labelFolderPath, batchSize):
 		randomLabelFileName = random.choice(labelFiles)
 		
 		index = randomLabelFileName.rfind("/")
-		randomMFCCFileName = list(MFCCFolderPath) + list("/") + list(self.randomLabelFileName[index+1:])
-		randomMFCCFileName = randomMFCCFileName.replace("lbl", "npy")
+		randomMFCCFileName = list(MFCCFolderPath) + list("/") + list(randomLabelFileName[index+1:])
+		randomMFCCFileName[-3] = 'n'
+		randomMFCCFileName[-2] = 'p'
+		randomMFCCFileName[-1] = 'y'
+		randomMFCCFileName = "".join(randomMFCCFileName)
 
 		if os.path.isfile(randomLabelFileName):
 			if os.path.isfile(randomMFCCFileName):
@@ -46,11 +46,13 @@ def getBatch(MFCCFolderPath, labelFolderPath, batchSize):
 			labelList = [char for char in labelFile.readline()]
 			
 			labelAmount = statinfo = os.stat(randomLabelFileName).st_size
-			print str(MFCCMatrix.shape) + " " + str(labelAmount)
-			randomLabelIndex = random.randint(0,labelAmount-2)
+			if abs(MFCCMatrix.shape[0] - labelAmount) <=1:
+				randomLabelIndex = random.randint(0,labelAmount-2)
 			
-			batch[trainingExampleIndex] = np.append(MFCCMatrix[randomLabelIndex], labelList[randomLabelIndex])
-			trainingExampleIndex += 1
+				batch[trainingExampleIndex] = np.append(MFCCMatrix[randomLabelIndex], labelList[randomLabelIndex])
+				trainingExampleIndex += 1
+			elif DEBUG:
+				print 'File lengths don\'t match'
 	
 	if DEBUG:
 		print batch
