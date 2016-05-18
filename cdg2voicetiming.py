@@ -154,7 +154,7 @@ class cdgPlayer:
 					return False
 				if(DEBUG):
 					np.set_printoptions(threshold=np.nan)
-					print featureVector
+					print featureVector	
 				
 		return False
 				
