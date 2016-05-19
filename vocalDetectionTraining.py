@@ -4,7 +4,7 @@ import tensorflow as tf
 
 def main():
 	mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-	print mnist
+	print mnist.test
 	
 	sess = tf.InteractiveSession()
 #	batch = batchGenerator.getBatch("features/input", "features/output", 32)
