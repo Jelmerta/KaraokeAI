@@ -1,9 +1,9 @@
-import batchGenerator
+#import batchGenerator
 import tensorflow as tf
 
 def main():
 	sess = tf.InteractiveSession()
-	batch = batchGenerator.getBatch("features/input", "features/output", 32)
+#	batch = batchGenerator.getBatch("features/input", "features/output", 32)
 	
 	x = tf.placeholder(tf.float32, shape=[None, 784]) # 13
 	y_ = tf.placeholder(tf.float32, shape=[None, 10]) # 2
