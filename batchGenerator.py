@@ -51,7 +51,7 @@ class batchGenerator():
 		MFCCFileName[-1] = 'y'
 		return "".join(MFCCFileName)
 	
-	def getBatch(self, batchSize):
+	def getBatch(self, setIndex, batchSize):
 		randomBatch = batch(batchSize)#(# np.zeros((int(batchSize), 2))
 		trainingExampleIndex = 0
 		
