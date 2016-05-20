@@ -85,7 +85,7 @@ class batchGenerator():
 					trainingExampleIndex += 1
 				elif DEBUG:
 					print 'File lengths don\'t match'
-			elif(DEBUG)
+			elif(DEBUG):
 				print 'can\'t find MFCC file'
 	
 		if DEBUG:
