@@ -41,13 +41,13 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 	for file in glob.glob(folderPath + "/*.mp3"):
 		afp.processFile(engine, file)
 		feats = engine.readAllOutputs()
-
+		
 		index = file.rfind("/")
-		mfccFileName = list(file[index+1:])
+		mfccFileName = list(outputPath) + list("/") + list(file[index+1:])
 		mfccFileName[-3] = 'n'
 		mfccFileName[-2] = 'p'
 		mfccFileName[-1] = 'y'
-		np.save("".join(list(outputPath) + list("/") + mfccFileName), feats['mfcc']) # "/home/jelmer/features/input/"
+		np.save("".join(mfccFileName), feats['mfcc']) # "/home/jelmer/features/input/"
 
 def main():
     args = sys.argv[1:]
