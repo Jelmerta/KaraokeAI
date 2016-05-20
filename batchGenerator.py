@@ -86,7 +86,7 @@ class batchGenerator():
 		if DEBUG:
 			print randomBatch
 		
-		return randomBatch
+		return randomBatch.inputFeature, randomBatch.outputFeature
 
 class batch():
 	def __init__(self, batchSize):
