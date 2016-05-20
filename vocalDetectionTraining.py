@@ -50,6 +50,7 @@ def main():
 	for i in range(20000):
 		#batch = mnist.train.next_batch(50)
 		batch = bg.getBatch(32)
+		print batch
 		if i%100 == 0:
 			train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			print("step %d, training accuracy %g"%(i, train_accuracy))
