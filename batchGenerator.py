@@ -54,7 +54,7 @@ class batchGenerator():
 	def getBatch(self, batchSize):
 		randomBatch = batch(batchSize)#(# np.zeros((int(batchSize), 2))
 		trainingExampleIndex = 0
-	
+		
 		while trainingExampleIndex < batchSize:
 			randomLabelFileName = random.choice(self.sets[0]) # Using training set here to get a batch
 			randomMFCCFileName = self.labelToMFCCFileName(randomLabelFileName)

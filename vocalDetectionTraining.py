@@ -7,7 +7,7 @@ def main():
 	print mnist.test._images
 	
 	sess = tf.InteractiveSession()
-	bg = batchGenerator.batchGenerator("features/input", "features/output")
+	bg = batchGenerator.batchGenerator("../features/input", "../features/output")
 	
 	x = tf.placeholder(tf.float32, shape=[None, 784]) # 13
 	y_ = tf.placeholder(tf.float32, shape=[None, 10]) # 2
