@@ -1,6 +1,7 @@
 import batchGenerator
 import tensorflow as tf
 
+# shouldnt i use more blocks so an image is created as input?
 def main():
 	
 	sess = tf.InteractiveSession()
@@ -9,7 +10,7 @@ def main():
 	x = tf.placeholder(tf.float32, shape=[None, 13]) # 13
 	y_ = tf.placeholder(tf.float32, shape=[None, 2]) # 2
 	
-	W_conv1 = weight_variable([5, 5, 1, 32])
+	W_conv1 = weight_variable([1, 13, 1, 32]) # was 5 5 1 32
 	b_conv1 = bias_variable([32])
 	
 	x_image = tf.reshape(x, [-1,1,13,1]) # was 28/28
@@ -17,7 +18,7 @@ def main():
 	h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 	h_pool1 = max_pool_2x2(h_conv1)
 	
-	W_conv2 = weight_variable([5, 5, 32, 64])
+	W_conv2 = weight_variable([1, 13, 32, 64]) # was 5 5
 	b_conv2 = bias_variable([64])
 
 	h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
