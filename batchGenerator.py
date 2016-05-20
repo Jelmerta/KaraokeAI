@@ -12,7 +12,7 @@ TRAIN_SPLIT = 0.7
 VALIDATION_SPLIT = 0.1
 TEST_SPLIT = 0.2
 
-DEBUG = 0
+DEBUG = 1
 
 class batchGenerator():
 	def __init__(self, MFCCFolderPath, labelFolderPath):
@@ -64,6 +64,8 @@ class batchGenerator():
 				if os.path.isfile(randomMFCCFileName):
 					MFCCMatrix = np.load(randomMFCCFileName)
 				else:
+					if(DEBUG)
+						print 'can\'t find MFCC file'
 					continue
 			
 				labelFile = open(randomLabelFileName, "r+")
@@ -83,6 +85,8 @@ class batchGenerator():
 					trainingExampleIndex += 1
 				elif DEBUG:
 					print 'File lengths don\'t match'
+			elif(DEBUG)
+				print 'can\'t find MFCC file'
 	
 		if DEBUG:
 			print randomBatch
