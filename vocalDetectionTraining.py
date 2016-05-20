@@ -6,13 +6,13 @@ def main():
 	sess = tf.InteractiveSession()
 	bg = batchGenerator.batchGenerator("../features/input", "../features/output")
 	
-	x = tf.placeholder(tf.float32, shape=[None, 784]) # 13
-	y_ = tf.placeholder(tf.float32, shape=[None, 10]) # 2
+	x = tf.placeholder(tf.float32, shape=[None, 13]) # 13
+	y_ = tf.placeholder(tf.float32, shape=[None, 2]) # 2
 	
 	W_conv1 = weight_variable([5, 5, 1, 32])
 	b_conv1 = bias_variable([32])
 	
-	x_image = tf.reshape(x, [-1,28,28,1])
+	x_image = tf.reshape(x, [-1,1,13,1]) # was 28/28
 	
 	h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 	h_pool1 = max_pool_2x2(h_conv1)
