@@ -39,6 +39,7 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 
 	afp = AudioFileProcessor()
 	for file in glob.glob(folderPath + "/*.mp3"):
+		print file
 		afp.processFile(engine, file)
 		feats = engine.readAllOutputs()
 		
