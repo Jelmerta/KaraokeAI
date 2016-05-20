@@ -64,7 +64,7 @@ class batchGenerator():
 				if os.path.isfile(randomMFCCFileName):
 					MFCCMatrix = np.load(randomMFCCFileName)
 				else:
-					if(DEBUG)
+					if(DEBUG):
 						print 'can\'t find MFCC file'
 					continue
 			
