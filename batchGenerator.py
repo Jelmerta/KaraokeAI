@@ -7,6 +7,9 @@ import random
 import numpy as np
 	
 MEL_FEATURE_AMOUNT = 13
+TRAIN_SPLIT = 0.7
+VALIDATION_SPLIT = 0.05
+TEST_SPLIT = 0.25
 DEBUG = 0
 	
 def main():
