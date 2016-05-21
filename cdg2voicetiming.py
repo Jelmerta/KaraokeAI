@@ -149,13 +149,15 @@ class cdgPlayer:
 						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
 				
 						self.writeToFile(writeFileName, featureVector)					
+						
+						if(DEBUG):
+							np.set_printoptions(threshold=np.nan)
+							print featureVector	
+						
 						return True					
 					else:
 						print 'No correct label found, exiting current cdg file'
 						return False
-					if(DEBUG):
-						np.set_printoptions(threshold=np.nan)
-						print featureVector	
 			else:
 				print 'File: ' + writeFileName + ' already exists.'
 				return False
