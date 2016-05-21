@@ -60,8 +60,6 @@ class batchGenerator():
 		while trainingExampleIndex < batchSize:
 			randomLabelFileName = random.choice(self.sets[0]) # Using training set here to get a batch
 			randomMFCCFileName = self.labelToMFCCFileName(randomLabelFileName)
-			print randomLabelFileName
-			print randomMFCCFileName
 			if os.path.isfile(randomLabelFileName):
 				if os.path.isfile(randomMFCCFileName):
 					h5f = h5py.File(randomMFCCFileName, 'r')
