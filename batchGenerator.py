@@ -5,8 +5,10 @@ import os
 import sys
 import random
 import numpy as np
+import h5py
 	
 MEL_FEATURE_AMOUNT = 13
+BLOCKS_IN_INPUT_FEATURE = 50
 
 TRAIN_SPLIT = 0.7
 VALIDATION_SPLIT = 0.1
@@ -46,13 +48,13 @@ class batchGenerator():
 	def labelToMFCCFileName(self, labelFileName):
 		index = labelFileName.rfind("/")
 		MFCCFileName = list(self.MFCCFolderPath) + list("/") + list(labelFileName[index+1:])
-		MFCCFileName[-3] = 'n'
-		MFCCFileName[-2] = 'p'
-		MFCCFileName[-1] = 'y'
+		MFCCFileName[-3] = 'h'
+		MFCCFileName[-2] = '5'
+		MFCCFileName[-1] = ''
 		return "".join(MFCCFileName)
 	
 	def getBatch(self, setIndex, batchSize):
-		randomBatch = batch(batchSize)#(# np.zeros((int(batchSize), 2))
+		randomBatch = batch(batchSize)
 		trainingExampleIndex = 0
 		
 		while trainingExampleIndex < batchSize:
@@ -62,7 +64,9 @@ class batchGenerator():
 			print randomMFCCFileName
 			if os.path.isfile(randomLabelFileName):
 				if os.path.isfile(randomMFCCFileName):
-					MFCCMatrix = np.load(randomMFCCFileName)
+					h5f = h5py.File(randomMFCCFileName, 'r')
+					MFCCMatrix = h5f['mfcc'][:]
+					h5f.close()
 				else:
 					if(DEBUG):
 						print 'can\'t find MFCC file'
@@ -72,10 +76,10 @@ class batchGenerator():
 				labelList = [char for char in labelFile.readline()]
 			
 				labelAmount = statinfo = os.stat(randomLabelFileName).st_size
-				if abs(MFCCMatrix.shape[0] - labelAmount) <=1:
+				if abs(MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount) <= BLOCKS_IN_INPUT_FEATURE/2:
 					randomLabelIndex = random.randint(0,labelAmount-2)
 			
-					randomBatch.inputFeature[trainingExampleIndex] = MFCCMatrix[randomLabelIndex] 
+					randomBatch.inputFeature[trainingExampleIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+50].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
 					if(int(labelList[randomLabelIndex]) == 0):
 						randomBatch.outputFeature[trainingExampleIndex, 0] = 1
 					elif(int(labelList[randomLabelIndex]) == 1):
@@ -87,16 +91,13 @@ class batchGenerator():
 					print 'File lengths don\'t match'
 			elif(DEBUG):
 				print 'can\'t find MFCC file'
-	
-		if DEBUG:
-			print randomBatch
 		
 		return randomBatch.inputFeature, randomBatch.outputFeature
 
 class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
-		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT))
+		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT*BLOCKS_IN_INPUT_FEATURE))
 		self.outputFeature = np.zeros((batchSize, 2))
 
 def main():
@@ -104,19 +105,10 @@ def main():
 		print 'Incorrect amount of parameters'
 		sys.exit(2)
 
-
 	MFCCFolderPath = sys.argv[1]
 	labelFolderPath = sys.argv[2]
-#	batchSize = int(sys.argv[3])
 
 	bg = batchGenerator(MFCCFolderPath, labelFolderPath)
-#	batchie = bg.getBatch(32)
-	#print batchie.inputFeature
-	#print batchie.outputFeature
-	# Example call: python batchGenerator.py MFCCFolderPath labelFolderPath 32
-	
-#	split_to_sets(MFCCFolderPath, labelFolderPath)
-#	return getBatch(batchSize)
 
 if __name__ == "__main__":
 	main()
