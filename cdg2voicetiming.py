@@ -126,36 +126,39 @@ class cdgPlayer:
 		# Main processing loop		
 		allClassifiedInstructions = []
 		while 1:
-			sequence = self.cdgGetNextSequence()
-			if(sequence):
-				sequence.index = self.sequenceCount
-				if(len(sequence.instructionList) != 0):
-					if(sequence.containsVocals()):
-						self.vocalSequenceCount = self.vocalSequenceCount + 1
-						allClassifiedInstructions = np.append(allClassifiedInstructions, sequence.classifyInstructions())
+			index = self.FileName.rfind("/")
+			writeFileName = list(self.outputFilePath) + list("/") + list(self.FileName[index+1:])
+			writeFileName[-3] = "l"
+			writeFileName[-2] = "b"
+			writeFileName[-1] = "l"
+			writeFileName = "".join(writeFileName)
+			if(not is.path.isfile(writeFileName)):
+				sequence = self.cdgGetNextSequence()
+				if(sequence):
+					sequence.index = self.sequenceCount
+					if(len(sequence.instructionList) != 0):
+						if(sequence.containsVocals()):
+							self.vocalSequenceCount = self.vocalSequenceCount + 1
+							allClassifiedInstructions = np.append(allClassifiedInstructions, sequence.classifyInstructions())
+					else:
+						print 'empty sequence'
+					self.sequenceCount = self.sequenceCount + 1
 				else:
-					print 'empty sequence'
-				self.sequenceCount = self.sequenceCount + 1
-			else:
-				self.cdgFile.close()
-				if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
-					featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
-					index = self.FileName.rfind("/")
-					print list(self.outputFilePath)
-					print list(self.FileName[index+1:])
-					writeFileName = list(self.outputFilePath) + list("/") + list(self.FileName[index+1:])
-					writeFileName[-3] = "l"
-					writeFileName[-2] = "b"
-					writeFileName[-1] = "l"
-					self.writeToFile("".join(writeFileName), featureVector)					
-					return True					
-				else:
+					self.cdgFile.close()
+					if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
+						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
+				
+						self.writeToFile(writeFileName, featureVector)					
+						return True					
+					else:
+						if(DEBUG):
+							print 'No correct label found, exiting'
+						return False
 					if(DEBUG):
-						print 'No correct label found, exiting'
-					return False
-				if(DEBUG):
-					np.set_printoptions(threshold=np.nan)
-					print featureVector	
+						np.set_printoptions(threshold=np.nan)
+						print featureVector	
+			else:
+				print 'File: ' + writeFileName + ' already exists.'
 				
 		return False
 				
