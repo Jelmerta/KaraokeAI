@@ -1,7 +1,6 @@
 import batchGenerator 
 import tensorflow as tf
 
-# shouldnt i use more blocks so an image is created as input?
 def main():
 	sess = tf.InteractiveSession()
 	bg = batchGenerator.batchGenerator("../features/input", "../features/output")
