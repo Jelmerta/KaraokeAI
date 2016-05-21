@@ -132,7 +132,7 @@ class cdgPlayer:
 			writeFileName[-2] = "b"
 			writeFileName[-1] = "l"
 			writeFileName = "".join(writeFileName)
-			if(not is.path.isfile(writeFileName)):
+			if(not os.path.isfile(writeFileName)):
 				sequence = self.cdgGetNextSequence()
 				if(sequence):
 					sequence.index = self.sequenceCount
