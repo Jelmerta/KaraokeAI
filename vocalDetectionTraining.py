@@ -34,8 +34,8 @@ def main():
 	keep_prob = tf.placeholder(tf.float32)
 	h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 	
-	W_fc2 = weight_variable([1024, 10])
-	b_fc2 = bias_variable([10])
+	W_fc2 = weight_variable([1024, 2])
+	b_fc2 = bias_variable([2])
 
 	y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	

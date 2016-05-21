@@ -151,8 +151,7 @@ class cdgPlayer:
 						self.writeToFile(writeFileName, featureVector)					
 						return True					
 					else:
-						if(DEBUG):
-							print 'No correct label found, exiting'
+						print 'No correct label found, exiting current cdg file'
 						return False
 					if(DEBUG):
 						np.set_printoptions(threshold=np.nan)
