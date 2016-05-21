@@ -5,7 +5,6 @@ from yaafelib import *
 import os
 import sys
 import numpy as np
-import cpickle
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it

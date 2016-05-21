@@ -1,9 +1,8 @@
-import batchGenerator
+import batchGenerator 
 import tensorflow as tf
 
 # shouldnt i use more blocks so an image is created as input?
 def main():
-	
 	sess = tf.InteractiveSession()
 	bg = batchGenerator.batchGenerator("../features/input", "../features/output")
 	
@@ -44,7 +43,7 @@ def main():
 	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-	sess.run(tf.initialize_all_variables())
+	sess.run(tf.initialize_all_variables()) #one of these init not ne
 	for i in range(20000):
 		batch = bg.getBatch(0, 32)
 		print batch

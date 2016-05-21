@@ -141,6 +141,8 @@ class cdgPlayer:
 				if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
 					featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
 					index = self.FileName.rfind("/")
+					print list(self.outputFilePath)
+					print list(self.FileName[index+1:])
 					writeFileName = list(self.outputFilePath) + list("/") + list(self.FileName[index+1:])
 					writeFileName[-3] = "l"
 					writeFileName[-2] = "b"
@@ -169,9 +171,9 @@ class cdgPlayer:
 		packetInterval = int(round(interval/1.0 * CDG_PACKETS_PER_SECOND))
 		featureVector = np.zeros((self.getFileSize()/24)/packetInterval, dtype=np.int)
 		for i in range(len(featureVector)):
-			packetIndex = i * packetInterval
+			packetIndex = i * packetInterval + packetInterval/2
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
-			if(np.abs(packetIndex - closestValue) <= packetInterval / 2):
+			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue < packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
 		return featureVector
 	
