@@ -5,6 +5,7 @@ from yaafelib import *
 import os
 import sys
 import numpy as np
+import cpickle
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -39,15 +40,18 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 
 	afp = AudioFileProcessor()
 	for file in glob.glob(folderPath + "/*.mp3"):
-		afp.processFile(engine, file)
-		feats = engine.readAllOutputs()
-		
 		index = file.rfind("/")
 		mfccFileName = list(outputPath) + list("/") + list(file[index+1:])
 		mfccFileName[-3] = 'n'
 		mfccFileName[-2] = 'p'
 		mfccFileName[-1] = 'y'
-		np.save("".join(mfccFileName).replace('_', ' - '), feats['mfcc']) # "/home/jelmer/features/input/"
+		
+		if not os.path.isfile(mfccFileName):
+			afp.processFile(engine, file)
+			feats = engine.readAllOutputs()
+			print type(feats)
+						
+			np.save("".join(mfccFileName).replace('_', ' - '), feats['mfcc']) # "/home/jelmer/features/input/"
 
 def main():
     args = sys.argv[1:]
