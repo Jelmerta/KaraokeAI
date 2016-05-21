@@ -159,6 +159,7 @@ class cdgPlayer:
 						print featureVector	
 			else:
 				print 'File: ' + writeFileName + ' already exists.'
+				return False
 				
 		return False
 				
