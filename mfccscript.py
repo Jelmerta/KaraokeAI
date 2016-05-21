@@ -5,7 +5,7 @@ from yaafelib import *
 import os
 import sys
 import numpy as np
-import cpickle
+import h5py
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -42,16 +42,18 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 	for file in glob.glob(folderPath + "/*.mp3"):
 		index = file.rfind("/")
 		mfccFileName = list(outputPath) + list("/") + list(file[index+1:])
-		mfccFileName[-3] = 'n'
-		mfccFileName[-2] = 'p'
-		mfccFileName[-1] = 'y'
+		mfccFileName[-3] = 'h'
+		mfccFileName[-2] = '5'
+		mfccFileName[-1] = ''
+		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
-		if not os.path.isfile(mfccFileName):
+		if not os.path.isfile("".join(mfccFileName).replace('_', ' - ')):
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs()
-			print type(feats)
-						
-			np.save("".join(mfccFileName).replace('_', ' - '), feats['mfcc']) # "/home/jelmer/features/input/"
+			
+			h5f = h5py.File(mfccFileName, 'w')
+			h5f.create_dataset('mfcc', data=feats['mfcc'])
+			h5f.close()
 
 def main():
     args = sys.argv[1:]
