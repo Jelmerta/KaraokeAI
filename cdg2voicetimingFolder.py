@@ -16,7 +16,7 @@ def main():
 		
 	for file in glob.glob(folderPath + "/*.cdg"):
 		call = "python cdg2voicetiming.py \"" + file + "\" \"" + outputFolderPath + "\" " + interval
-		print 'Currently labeling: ' + call
+		print 'Currently labeling: ' + file
 		if(subprocess.call(call, shell=True) == 0):
 			correctCount += 1
 		fileCount += 1
