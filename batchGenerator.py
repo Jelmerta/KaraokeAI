@@ -74,6 +74,8 @@ class batchGenerator():
 				labelList = [char for char in labelFile.readline()]
 			
 				labelAmount = statinfo = os.stat(randomLabelFileName).st_size
+				print MFCCMatrix.shape[0]
+				print labelAmount
 				if abs(MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount) <= BLOCKS_IN_INPUT_FEATURE/2:
 					randomLabelIndex = random.randint(0,labelAmount-2)
 			
