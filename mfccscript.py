@@ -69,7 +69,7 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				labelFile[-3] = 'l'
 				labelFile[-2] = 'b'
 				labelFile[-1] = 'l'
-				labelFile = "".join(labelFile)
+				labelFile = "".join(labelFile).replace('_', ' - ')
 				print labelFile
 				if os.path.isfile(labelFile):
 					seconds = getFileSize(labelFile) / 10.0
