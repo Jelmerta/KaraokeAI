@@ -66,17 +66,30 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				np.save(mfccFileName, feats['mfcc'])
 				print feats['mfcc'].shape
 				
-				labelFile = list('../features/output/') + list(file[index+1:])
-				labelFile[-3] = 'l'
-				labelFile[-2] = 'b'
-				labelFile[-1] = 'l'
-				labelFile = "".join(labelFile).replace('_', ' - ')
-				print labelFile
-				if os.path.isfile(labelFile):
-					seconds = getFileSize(labelFile) / 10.0
-					audio = MP3(file)
-					print audio.info.length
-					print seconds
+				if DEBUG:
+					labelFile = list('../features/output/') + list(file[index+1:])
+					labelFile[-3] = 'l'
+					labelFile[-2] = 'b'
+					labelFile[-1] = 'l'
+					labelFile = "".join(labelFile).replace('_', ' - ')
+					print labelFile
+					
+					cdgFile = list('../data/Karaoke/cdg/' + list(file[index+1:])
+					cdgFile[-3] = 'c'
+					cdgFile[-2] = 'd'
+					cdgFile[-1] = 'g'
+					cdgFile = "".join(cdgFile).replace('_', ' - ')
+					print cdgFile
+					
+					if os.path.isfile(labelFile):
+						statinfo = os.stat(cdgFile)
+						print 'cdg size: ' + str(statinfo.st_size)
+						
+						seconds = getFileSize(labelFile) / 10.0
+						print seconds
+						
+						audio = MP3(file)
+						print audio.info.length
 			
 		else:
 			print 'MFCC File already exists. Continuing.'
