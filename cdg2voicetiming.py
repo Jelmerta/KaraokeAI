@@ -19,7 +19,7 @@ CDG_MASK 					= 0x3F
 
 CDG_PACKETS_PER_SECOND 		= 300
 
-DEBUG = 0
+DEBUG = 1
 		
 class Instruction():
 	def __init__(self, packetCount, x, y, color):
@@ -179,7 +179,6 @@ class cdgPlayer:
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
 			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue <= packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
-		print featureVector
 		return featureVector
 	
 	def findClosestValue(self, myList, myNumber):
