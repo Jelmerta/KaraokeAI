@@ -56,7 +56,9 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			mfccFileName[-1] = 'y'
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
+		print 'hello'
 		if not os.path.isfile(mfccFileName):
+			print 'hello2'
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs() # maybe a try block?
 			print feats['mfcc'].shape
