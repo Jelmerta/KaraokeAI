@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from mutagen.mp3 import MP3
 
-USE_HDF5 = 0
+USE_HDF5 = 1
 if USE_HDF5:
 	import h5py
 	
