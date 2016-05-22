@@ -51,11 +51,11 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			mfccFileName[-3] = 'n'
 			mfccFileName[-2] = 'p'
 			mfccFileName[-1] = 'y'
-		labelFile = '/home/jelmer/features/output/' + list(file[index+1:])
+		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
+		
+		labelFile = '/home/jelmer/features/output/' + file[index+1:]
 		seconds = getFileSize(labelFile) / 10.0
 		print seconds
-		
-		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
 		if not os.path.isfile(mfccFileName):
 			afp.processFile(engine, file)
