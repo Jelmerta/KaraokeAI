@@ -65,11 +65,12 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				np.save(mfccFileName, feats['mfcc'])
 				print feats['mfcc'].shape
 				
-				labelFile = list('/home/jelmer/features/output/') + list(file[index+1:])
+				labelFile = list('../features/output/') + list(file[index+1:])
 				labelFile[-3] = 'l'
 				labelFile[-2] = 'b'
 				labelFile[-1] = 'l'
 				labelFile = "".join(labelFile)
+				print labelFile
 				if os.path.isfile(labelFile):
 					seconds = getFileSize(labelFile) / 10.0
 					print seconds
