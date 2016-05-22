@@ -5,6 +5,7 @@ from yaafelib import *
 import os
 import sys
 import numpy as np
+from mutagen.mp3 import MP3
 
 USE_HDF5 = 0
 if USE_HDF5:
@@ -75,6 +76,8 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				print labelFile
 				if os.path.isfile(labelFile):
 					seconds = getFileSize(labelFile) / 10.0
+					audio = MP3(file)
+					print audio.info.length
 					print seconds
 			
 		else:
