@@ -96,8 +96,8 @@ class cdgPlayer:
 		self.FileName = cdgFileName
 		self.outputFilePath = outputFilePath
 		self.interval = float(interval)
-		FilePath = os.path.realpath(__file__)
-		FileSize = os.path.getsize(FilePath)
+		self.FilePath = os.path.realpath(__file__)
+		self.FileSize = os.path.getsize(FilePath)
 		
 		# For every 1/300s, the index of the array is either 0 or 1 depending on if someone is singing currently.
 		# Initialized as array of zeros.
