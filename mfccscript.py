@@ -43,9 +43,14 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 	for file in glob.glob(folderPath + "/*.mp3"):
 		index = file.rfind("/")
 		mfccFileName = list(outputPath) + list("/") + list(file[index+1:])
-		mfccFileName[-3] = 'h'
-		mfccFileName[-2] = '5'
-		mfccFileName[-1] = ''
+		if USE_HDF5:
+			mfccFileName[-3] = 'h'
+			mfccFileName[-2] = '5'
+			mfccFileName[-1] = ''
+		else:
+			mfccFileName[-3] = 'n'
+			mfccFileName[-2] = 'p'
+			mfccFileName[-1] = 'y'
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
 		if not os.path.isfile("".join(mfccFileName).replace('_', ' - ')):
@@ -62,6 +67,8 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 		else:
 			print 'MFCC File already exists. Continuing.'
 
+# Example call:
+# python mfccscript.py ../data/Karaoke/mp3 ../features/input/ 44100 50 1500 88.2 88.2 && python mfccscript.py ../data/Karaoke/mp3 ../features/input/ 48000 50 1500 96 96   			
 def main():
     args = sys.argv[1:]
     mfccMaker(args[0], args[1], args[2], args[3], args[4], args[5], args[6])

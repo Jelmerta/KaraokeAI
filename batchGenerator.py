@@ -51,9 +51,14 @@ class batchGenerator():
 	def labelToMFCCFileName(self, labelFileName):
 		index = labelFileName.rfind("/")
 		MFCCFileName = list(self.MFCCFolderPath) + list("/") + list(labelFileName[index+1:])
-		MFCCFileName[-3] = 'h'
-		MFCCFileName[-2] = '5'
-		MFCCFileName[-1] = ''
+		if USE_HDF5:
+			MFCCFileName[-3] = 'h'
+			MFCCFileName[-2] = '5'
+			MFCCFileName[-1] = ''
+		else:
+			MFCCFileName[-3] = 'n'
+			MFCCFileName[-2] = 'p'
+			MFCCFileName[-1] = 'y'
 		return "".join(MFCCFileName)
 	
 	def getBatch(self, setIndex, batchSize):
