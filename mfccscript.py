@@ -53,15 +53,6 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			mfccFileName[-1] = 'y'
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
-		labelFile = list('/home/jelmer/features/output/') + list(file[index+1:])
-		labelFile[-3] = 'l'
-		labelFile[-2] = 'b'
-		labelFile[-1] = 'l'
-		labelFile = "".join(labelFile)
-		if os.path.isfile(labelFile):
-			seconds = getFileSize(labelFile) / 10.0
-			print seconds
-		
 		if not os.path.isfile(mfccFileName):
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs() # maybe a try block?
@@ -73,6 +64,15 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			else:
 				np.save(mfccFileName, feats['mfcc'])
 				print feats['mfcc'].shape
+				
+				labelFile = list('/home/jelmer/features/output/') + list(file[index+1:])
+				labelFile[-3] = 'l'
+				labelFile[-2] = 'b'
+				labelFile[-1] = 'l'
+				labelFile = "".join(labelFile)
+				if os.path.isfile(labelFile):
+					seconds = getFileSize(labelFile) / 10.0
+					print seconds
 			
 		else:
 			print 'MFCC File already exists. Continuing.'
