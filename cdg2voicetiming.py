@@ -179,9 +179,6 @@ class cdgPlayer:
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
 			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue < packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
-		print self.FileSize
-		print 'total time: ' + str(self.FileSize/24/300)
-		print featureVector.shape
 		return featureVector
 	
 	def findClosestValue(self, myList, myNumber):
