@@ -53,7 +53,7 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			mfccFileName[-1] = 'y'
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
-		if not os.path.isfile("".join(mfccFileName).replace('_', ' - ')):
+		if not os.path.isfile(mfccFileName):
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs()
 			
