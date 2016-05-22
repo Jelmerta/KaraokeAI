@@ -5,7 +5,10 @@ from yaafelib import *
 import os
 import sys
 import numpy as np
-import h5py
+
+USE_HDF5 = 0
+if USE_HDF5:
+	import h5py
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -49,9 +52,13 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs()
 			
-			h5f = h5py.File(mfccFileName, 'w')
-			h5f.create_dataset('mfcc', data=feats['mfcc'])
-			h5f.close()
+			if(USE_HDF5):
+				h5f = h5py.File(mfccFileName, 'w')
+				h5f.create_dataset('mfcc', data=feats['mfcc'])
+				h5f.close()
+			else:
+				np.save(mfccFileName, feats['mfcc'])
+			
 		else:
 			print 'MFCC File already exists. Continuing.'
 

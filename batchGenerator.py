@@ -5,7 +5,6 @@ import os
 import sys
 import random
 import numpy as np
-import h5py
 	
 MEL_FEATURE_AMOUNT = 13
 BLOCKS_IN_INPUT_FEATURE = 50
@@ -15,6 +14,10 @@ VALIDATION_SPLIT = 0.1
 TEST_SPLIT = 0.2
 
 DEBUG = 1
+
+USE_HDF5 = 0
+if USE_HDF5:
+	import h5py
 
 class batchGenerator():
 	def __init__(self, MFCCFolderPath, labelFolderPath):
@@ -62,9 +65,13 @@ class batchGenerator():
 			randomMFCCFileName = self.labelToMFCCFileName(randomLabelFileName)
 			if os.path.isfile(randomLabelFileName):
 				if os.path.isfile(randomMFCCFileName):
-					h5f = h5py.File(randomMFCCFileName, 'r')
-					MFCCMatrix = h5f['mfcc'][:]
-					h5f.close()
+					if(USE_HDF5):
+						h5f = h5py.File(randomMFCCFileName, 'r')
+						MFCCMatrix = h5f['mfcc'][:]
+						h5f.close()
+					else:
+						MFCCMatrix = np.load(randomMFCCFileName)
+					
 				else:
 					if(DEBUG):
 						print 'can\'t find MFCC file'
