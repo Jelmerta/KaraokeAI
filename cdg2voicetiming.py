@@ -101,7 +101,7 @@ class cdgPlayer:
 		
 		# For every 1/300s, the index of the array is either 0 or 1 depending on if someone is singing currently.
 		# Initialized as array of zeros.
-		self.SingingVector = np.zeros((FileSize,), dtype=np.int)
+		self.SingingVector = np.zeros((self.FileSize,), dtype=np.int)
 		
 		self.packetCount = 0
 		self.amountOfInstructions = 0
