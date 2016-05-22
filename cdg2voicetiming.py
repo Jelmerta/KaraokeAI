@@ -96,8 +96,7 @@ class cdgPlayer:
 		self.FileName = cdgFileName
 		self.outputFilePath = outputFilePath
 		self.interval = float(interval)
-		self.FilePath = os.path.realpath(__file__)
-		self.FileSize = os.path.getsize(self.FilePath)
+		self.FileSize = getFileSize()
 		
 		# For every 1/300s, the index of the array is either 0 or 1 depending on if someone is singing currently.
 		# Initialized as array of zeros.
@@ -168,6 +167,10 @@ class cdgPlayer:
 		with open(fileName, 'w') as f:
 			f.write("".join(str(item) for item in list))
 			
+	def getFileSize(self):
+ 		statinfo = os.stat(self.FileName)
+		return statinfo.st_size
+			
 	def getFeatureVector(self, classifiedInstructions, interval):
 		packetInterval = int(round(interval/1.0 * CDG_PACKETS_PER_SECOND))
 		featureVector = np.zeros((self.FileSize/24)/packetInterval, dtype=np.int)
@@ -176,6 +179,7 @@ class cdgPlayer:
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
 			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue < packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
+		print self.FileSize
 		print 'total time: ' + str(self.FileSize/24/300)
 		print featureVector.shape
 		return featureVector
