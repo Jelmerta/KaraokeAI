@@ -96,7 +96,7 @@ class cdgPlayer:
 		self.FileName = cdgFileName
 		self.outputFilePath = outputFilePath
 		self.interval = float(interval)
-		self.FileSize = getFileSize()
+		self.FileSize = self.getFileSize()
 		
 		# For every 1/300s, the index of the array is either 0 or 1 depending on if someone is singing currently.
 		# Initialized as array of zeros.
