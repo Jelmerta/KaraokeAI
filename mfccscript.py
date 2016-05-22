@@ -59,6 +59,10 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 		if not os.path.isfile(mfccFileName):
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs() # maybe a try block?
+			print feats['mfcc'].shape
+			if feats['mfcc'].shape[0] == 0:
+				print 'aborting, empty'
+				continue
 			
 			if(USE_HDF5):
 				h5f = h5py.File(mfccFileName, 'w')
