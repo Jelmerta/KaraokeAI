@@ -30,7 +30,7 @@ if USE_HDF5:
 # All the other variables remain default and probably don't need changing
 
 def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
-	fp = FeaturePlan(sample_rate=sampleRate, resample=True)
+	fp = FeaturePlan(sample_rate=sampleRate)
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
