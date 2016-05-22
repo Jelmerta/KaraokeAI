@@ -54,6 +54,9 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
 		labelFile = '/home/jelmer/features/output/' + file[index+1:]
+		mfccFileName[-3] = 'l'
+		mfccFileName[-2] = 'b'
+		mfccFileName[-1] = 'l'
 		seconds = getFileSize(labelFile) / 10.0
 		print seconds
 		
