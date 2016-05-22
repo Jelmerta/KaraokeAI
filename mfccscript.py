@@ -9,6 +9,8 @@ import numpy as np
 USE_HDF5 = 0
 if USE_HDF5:
 	import h5py
+	
+print H5_VERS_INFO
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
