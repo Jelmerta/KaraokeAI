@@ -27,12 +27,10 @@ import h5py
 # All the other variables remain default and probably don't need changing
 
 def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
-
 	fp = FeaturePlan(sample_rate=sampleRate)
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
-	#df.display()
 	
 	engine = Engine()
 	engine.load(df)
@@ -54,6 +52,8 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			h5f = h5py.File(mfccFileName, 'w')
 			h5f.create_dataset('mfcc', data=feats['mfcc'])
 			h5f.close()
+		else:
+			print 'MFCC File already exists. Continuing.'
 
 def main():
     args = sys.argv[1:]
