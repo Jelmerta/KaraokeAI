@@ -51,11 +51,15 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			mfccFileName[-3] = 'n'
 			mfccFileName[-2] = 'p'
 			mfccFileName[-1] = 'y'
+		labelFile = '/home/jelmer/features/output/' + list(file[index+1:])
+		seconds = getFileSize(labelFile) / 10.0
+		print seconds
+		
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
 		if not os.path.isfile(mfccFileName):
 			afp.processFile(engine, file)
-			feats = engine.readAllOutputs()
+			feats = engine.readAllOutputs() # maybe a try block?
 			
 			if(USE_HDF5):
 				h5f = h5py.File(mfccFileName, 'w')
@@ -63,10 +67,15 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				h5f.close()
 			else:
 				np.save(mfccFileName, feats['mfcc'])
+				print feats['mfcc'].shape
 			
 		else:
 			print 'MFCC File already exists. Continuing.'
 
+def getFileSize(fileName):
+	statinfo = os.stat(fileName)
+	return statinfo.st_size			
+			
 # Example call:
 # python mfccscript.py ../data/Karaoke/mp3 ../features/input/ 44100 50 1500 88.2 88.2 && python mfccscript.py ../data/Karaoke/mp3 ../features/input/ 48000 50 1500 96 96   			
 def main():
