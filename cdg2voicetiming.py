@@ -145,7 +145,7 @@ class cdgPlayer:
 					self.sequenceCount = self.sequenceCount + 1
 				else:
 					self.cdgFile.close()
-					if len(allClassifiedInstructions) > 0.2*self.getFileSize()/24/(CDG_PACKETS_PER_SECOND*self.interval):
+					if len(allClassifiedInstructions) > 0.2*self.FileSize/24/(CDG_PACKETS_PER_SECOND*self.interval):
 						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
 				
 						self.writeToFile(writeFileName, featureVector)					
