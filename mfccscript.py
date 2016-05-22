@@ -11,7 +11,7 @@ USE_HDF5 = 0
 if USE_HDF5:
 	import h5py
 	
-DEBUG = 1
+DEBUG = 0
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -66,9 +66,10 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				h5f.close()
 			else:
 				np.save(mfccFileName, feats['mfcc'])
-				print feats['mfcc'].shape
 				
 				if DEBUG:
+					print feats['mfcc'].shape
+				
 					labelFile = list('../features/output/') + list(file[index+1:])
 					labelFile[-3] = 'l'
 					labelFile[-2] = 'b'
