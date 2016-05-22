@@ -89,6 +89,7 @@ class batchGenerator():
 				print MFCCMatrix
 				print MFCCMatrix.shape
 				print labelAmount
+				print MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount
 				if abs(MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount) <= BLOCKS_IN_INPUT_FEATURE/2:
 					randomLabelIndex = random.randint(0,labelAmount-2)
 			
