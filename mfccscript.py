@@ -74,7 +74,7 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 					labelFile = "".join(labelFile).replace('_', ' - ')
 					print labelFile
 					
-					cdgFile = list('../data/Karaoke/cdg/' + list(file[index+1:])
+					cdgFile = list('../data/Karaoke/cdg/') + list(file[index+1:])
 					cdgFile[-3] = 'c'
 					cdgFile[-2] = 'd'
 					cdgFile[-1] = 'g'
