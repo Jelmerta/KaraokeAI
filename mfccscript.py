@@ -37,6 +37,12 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
+	
+	engine = Engine()
+	engine.load(df)
+	engine.getInputs()
+	
+	afp = AudioFileProcessor()
 
 	for file in glob.glob(folderPath + "/*.mp3"):
 		index = file.rfind("/")
@@ -51,18 +57,11 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			mfccFileName[-1] = 'y'
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
-		print 'hello'
 		if not os.path.isfile(mfccFileName):
-			print 'hello2'
-						
-			engine = Engine()
-			engine.load(df)
-			engine.getInputs()
 			
-			afp = AudioFileProcessor()
 			afp.processFile(engine, file)
-			feats = engine.readAllOutputs() # maybe a try block?
-			print feats['mfcc'].shape
+			
+			feats = engine.readAllOutputs()
 			if feats['mfcc'].shape[0] == 0:
 				print 'aborting, empty'
 				continue
@@ -73,33 +72,33 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 				h5f.close()
 			else:
 				np.save(mfccFileName, feats['mfcc'])
+			
+			if DEBUG:
+				print feats['mfcc'].shape
+			
+				labelFile = list('../features/output/') + list(file[index+1:])
+				labelFile[-3] = 'l'
+				labelFile[-2] = 'b'
+				labelFile[-1] = 'l'
+				labelFile = "".join(labelFile).replace('_', ' - ')
+				print labelFile
 				
-				if DEBUG:
-					print feats['mfcc'].shape
+				cdgFile = list('../data/Karaoke/cdg/') + list(file[index+1:])
+				cdgFile[-3] = 'c'
+				cdgFile[-2] = 'd'
+				cdgFile[-1] = 'g'
+				cdgFile = "".join(cdgFile).replace('_', ' - ')
+				print cdgFile
 				
-					labelFile = list('../features/output/') + list(file[index+1:])
-					labelFile[-3] = 'l'
-					labelFile[-2] = 'b'
-					labelFile[-1] = 'l'
-					labelFile = "".join(labelFile).replace('_', ' - ')
-					print labelFile
+				if os.path.isfile(labelFile):
+					statinfo = os.stat(cdgFile)
+					print 'cdg size: ' + str(statinfo.st_size)
 					
-					cdgFile = list('../data/Karaoke/cdg/') + list(file[index+1:])
-					cdgFile[-3] = 'c'
-					cdgFile[-2] = 'd'
-					cdgFile[-1] = 'g'
-					cdgFile = "".join(cdgFile).replace('_', ' - ')
-					print cdgFile
+					seconds = getFileSize(labelFile) / 10.0
+					print seconds
 					
-					if os.path.isfile(labelFile):
-						statinfo = os.stat(cdgFile)
-						print 'cdg size: ' + str(statinfo.st_size)
-						
-						seconds = getFileSize(labelFile) / 10.0
-						print seconds
-						
-						audio = MP3(file)
-						print audio.info.length
+					audio = MP3(file)
+					print audio.info.length
 			
 		else:
 			print 'MFCC File already exists. Continuing.'
