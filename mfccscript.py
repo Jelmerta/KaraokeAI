@@ -37,12 +37,7 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
-	
-	engine = Engine()
-	engine.load(df)
-	engine.getInputs()
 
-	afp = AudioFileProcessor()
 	for file in glob.glob(folderPath + "/*.mp3"):
 		index = file.rfind("/")
 		mfccFileName = list(outputPath) + list("/") + list(file[index+1:])
@@ -59,6 +54,12 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 		print 'hello'
 		if not os.path.isfile(mfccFileName):
 			print 'hello2'
+						
+			engine = Engine()
+			engine.load(df)
+			engine.getInputs()
+			
+			afp = AudioFileProcessor()
 			afp.processFile(engine, file)
 			feats = engine.readAllOutputs() # maybe a try block?
 			print feats['mfcc'].shape
