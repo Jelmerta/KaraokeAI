@@ -110,7 +110,7 @@ class batchGenerator():
 class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
-		self.inputFeature = np.zeros(batchSize * MEL_FEATURE_AMOUNT * BLOCKS_IN_INPUT_FEATURE)
+		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT * BLOCKS_IN_INPUT_FEATURE))
 		self.outputFeature = np.zeros(batchSize)
 
 def main():
