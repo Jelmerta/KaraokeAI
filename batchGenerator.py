@@ -90,8 +90,8 @@ class batchGenerator():
 			
 				labelAmount = len(labelList)
 				matrixFrameAmount = MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE
-				
 				lowestAmount = min(labelAmount, matrixFrameAmount)
+				
 				MFCCMatrix = MFCCMatrix[-lowestAmount*BLOCKS_IN_INPUT_FEATURE:]
 				labelList = labelList[-lowestAmount:]
 				

@@ -43,16 +43,16 @@ def main():
 	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-	sess.run(tf.initialize_all_variables()) #one of these init not ne
+	sess.run(tf.initialize_all_variables())
 	for i in range(1000):
 		print i
 		batch = bg.getBatch(0, 64)
-		if i%10 == 0:
+		if i%100 == 0:
 			train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			print("step %d, training accuracy %g"%(i, train_accuracy))
 		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
 
-	randomTestSet = bg.getBatch(1, 10000) #multiple of the same data might be used, so not perfect, change later
+	randomTestSet = bg.getBatch(1, 200) # multiple of the same data might be used, but doesn't matter since data is incredibly big
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
 	
 def weight_variable(shape):
