@@ -5,13 +5,13 @@ def main():
 	sess = tf.InteractiveSession()
 	bg = batchGenerator.batchGenerator("../features/input", "../features/output")
 	
-	x = tf.placeholder(tf.float32, shape=[None, 650]) # 13
-	y_ = tf.placeholder(tf.float32, shape=[None, 2]) # 2
+	x = tf.placeholder(tf.float32, shape=[None, 650])
+	y_ = tf.placeholder(tf.float32, shape=[None, 1])
 	
-	W_conv1 = weight_variable([5, 5, 1, 32]) # was 5 5 1 32
+	W_conv1 = weight_variable([5, 5, 1, 32])
 	b_conv1 = bias_variable([32])
 	
-	x_image = tf.reshape(x, [-1,50,13,1]) # was 28/28 (could be 50/13)
+	x_image = tf.reshape(x, [-1,50,13,1]) # (could be 50/13)
 	
 	h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 	h_pool1 = max_pool_2x2(h_conv1)
@@ -33,8 +33,8 @@ def main():
 	keep_prob = tf.placeholder(tf.float32)
 	h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 	
-	W_fc2 = weight_variable([1024, 2])
-	b_fc2 = bias_variable([2])
+	W_fc2 = weight_variable([1024, 1])
+	b_fc2 = bias_variable([1])
 
 	y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	
@@ -46,7 +46,7 @@ def main():
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	sess.run(tf.initialize_all_variables()) #one of these init not ne
-	for i in range(20000):
+	for i in range(1000):
 		batch = bg.getBatch(0, 64)
 		print batch
 		if i%100 == 0:
