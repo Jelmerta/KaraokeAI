@@ -105,7 +105,8 @@ class batchGenerator():
 			elif(DEBUG):
 				print 'can\'t find MFCC file'
 		
-		return randomBatch.inputFeature.reshape((1, BLOCKS_IN_INPUT_FEATURE+BLOCKS_IN_INPUT_FEATURE*batchSize)), randomBatch.outputFeature
+		print randomBatch.inputFeature.shape
+		return randomBatch.inputFeature.reshape((1, MEL_FEATURE_AMOUNT*BLOCKS_IN_INPUT_FEATURE*batchSize)), randomBatch.outputFeature
 
 class batch():
 	def __init__(self, batchSize):
