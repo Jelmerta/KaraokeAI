@@ -66,6 +66,7 @@ class batchGenerator():
 		batchIndex = 0
 		
 		while batchIndex < batchSize:
+			print ''
 			randomLabelFileName = random.choice(self.sets[0]) # Using training set here to get a batch
 			randomMFCCFileName = self.labelToMFCCFileName(randomLabelFileName)
 			if os.path.isfile(randomLabelFileName):
