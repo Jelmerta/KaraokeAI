@@ -78,7 +78,8 @@ class batchGenerator():
 						MFCCMatrix = np.load(randomMFCCFileName)
 					
 				else:
-					print 'can\'t find MFCC file, continuing.'
+					if(DEBUG):
+						print 'can\'t find MFCC file, continuing.'
 					continue
 			
 				labelFile = open(randomLabelFileName, "r+")
@@ -96,7 +97,7 @@ class batchGenerator():
 				
 				randomLabelIndex = random.randint(0,lowestAmount-1)
 			
-				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+50].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
+				randomBatch.inputFeature[batchIndex*randomLabelIndex*BLOCKS_IN_INPUT_FEATURE] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+50].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
 				if(int(labelList[randomLabelIndex]) == 1):
 					randomBatch.outputFeature[batchIndex] = 1
 				batchIndex += 1
@@ -109,7 +110,7 @@ class batchGenerator():
 class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
-		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT*BLOCKS_IN_INPUT_FEATURE))
+		self.inputFeature = np.zeros(batchSize * MEL_FEATURE_AMOUNT * BLOCKS_IN_INPUT_FEATURE)
 		self.outputFeature = np.zeros(batchSize)
 
 def main():
