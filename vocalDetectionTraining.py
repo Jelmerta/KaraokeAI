@@ -22,13 +22,11 @@ def main():
 	h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
 	h_pool2 = max_pool_2x2(h_conv2)
 	
-	W_fc1 = weight_variable([12 * 3 * 64, 1024])
+	W_fc1 = weight_variable([12 * 4 * 64, 1024])
 	b_fc1 = bias_variable([1024])
 
-	h_pool2_flat = tf.reshape(h_pool2, [-1, 12*3*64])
+	h_pool2_flat = tf.reshape(h_pool2, [-1, 12*4*64])
 	h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
-	
-	sess.run(tf.initialize_all_variables())
 	
 	keep_prob = tf.placeholder(tf.float32)
 	h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
@@ -48,7 +46,6 @@ def main():
 	sess.run(tf.initialize_all_variables()) #one of these init not ne
 	for i in range(1000):
 		batch = bg.getBatch(0, 64)
-		print batch
 		if i%100 == 0:
 			train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			print("step %d, training accuracy %g"%(i, train_accuracy))
