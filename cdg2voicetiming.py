@@ -146,7 +146,7 @@ class cdgPlayer:
 				else:
 					self.cdgFile.close()
 					if len(allClassifiedInstructions) > 0.2*self.FileSize/24/(CDG_PACKETS_PER_SECOND*self.interval):
-						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval, lastEndPadding)
+						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
 				
 						self.writeToFile(writeFileName, featureVector)					
 						
@@ -172,7 +172,7 @@ class cdgPlayer:
  		statinfo = os.stat(self.FileName)
 		return statinfo.st_size
 			
-	def getFeatureVector(self, classifiedInstructions, interval, endPadding):
+	def getFeatureVector(self, classifiedInstructions, interval):
 		packetInterval = int(round(interval/1.0 * CDG_PACKETS_PER_SECOND))
 		featureVector = np.zeros((self.FileSize/24)/packetInterval, dtype=np.int)
 		print self.packetCount
