@@ -63,9 +63,9 @@ class batchGenerator():
 	
 	def getBatch(self, setIndex, batchSize):
 		randomBatch = batch(batchSize)
-		trainingExampleIndex = 0
+		batchIndex = 0
 		
-		while trainingExampleIndex < batchSize:
+		while batchIndex < batchSize:
 			randomLabelFileName = random.choice(self.sets[0]) # Using training set here to get a batch
 			randomMFCCFileName = self.labelToMFCCFileName(randomLabelFileName)
 			if os.path.isfile(randomLabelFileName):
@@ -83,33 +83,31 @@ class batchGenerator():
 			
 				labelFile = open(randomLabelFileName, "r+")
 				labelList = [char for char in labelFile.readline()]
+				
+				print MFCCMatrix.shape
+				if len(labelList) == 0 or MFCCMatrix.shape[0] == 0:
+					continue
 			
 				labelAmount = len(labelList)
 				MatrixFrameAmount = MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE
 				print labelAmount
 				print matrixFrameAmount
 				
-				# if labelAmount > matrixFrameAmount:
-					# use all matrix
-				# else:
-					# use all labels
+				labelList and MFCCMatrix
 				
-				while one of the lists is not empty
-				cmon man
+				lowestAmount = min(labelAmount, matrixFrameAmount)
+				MFCCMatrix = MFCCMatrix[-lowestAmount*BLOCKS_IN_INPUT_FEATURE:]
+				labelList = labelList[-lowestAmount:]
+				print MFCCMatrix.shape
+				print len(labelList)
 				
-				if abs(MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount) <= BLOCKS_IN_INPUT_FEATURE/2:
-					randomLabelIndex = random.randint(0,labelAmount-2)
+				randomLabelIndex = random.randint(0,lowestAmount-1)
 			
-					randomBatch.inputFeature[trainingExampleIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+50].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
-					if(int(labelList[randomLabelIndex]) == 0):
-						randomBatch.outputFeature[trainingExampleIndex, 0] = 1
-					elif(int(labelList[randomLabelIndex]) == 1):
-						randomBatch.outputFeature[trainingExampleIndex, 1] = 1
-					else:
-						print 'This should not happen'
-					trainingExampleIndex += 1
-				elif DEBUG:
-					print 'File lengths don\'t match'
+				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+50].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
+				if(int(labelList[randomLabelIndex]) == 1):
+					randomBatch.outputFeature[batchIndex] = 1
+				batchIndex += 1
+				
 			elif(DEBUG):
 				print 'can\'t find MFCC file'
 		
@@ -119,7 +117,7 @@ class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
 		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT*BLOCKS_IN_INPUT_FEATURE))
-		self.outputFeature = np.zeros((batchSize, 2))
+		self.outputFeature = np.zeros(batchSize)
 
 def main():
 	if (len(sys.argv) != 3):
