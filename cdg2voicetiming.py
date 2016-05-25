@@ -19,7 +19,7 @@ CDG_MASK 					= 0x3F
 
 CDG_PACKETS_PER_SECOND 		= 300
 
-DEBUG = 1
+DEBUG = 0
 		
 class Instruction():
 	def __init__(self, timing, x, y, color):
@@ -129,7 +129,7 @@ class cdgPlayer:
 			writeFileName = list(self.outputFilePath) + list("/") + list(self.FileName[index+1:])
 			writeFileName[-3] = "l"
 			writeFileName[-2] = "b"
-			writeFileName[-1] = "2"
+			writeFileName[-1] = "l"
 			writeFileName = "".join(writeFileName)
 			if(not os.path.isfile(writeFileName)):
 				sequence = self.cdgGetNextSequence()
