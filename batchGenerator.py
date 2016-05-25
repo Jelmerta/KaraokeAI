@@ -5,6 +5,7 @@ import os
 import sys
 import random
 import numpy as np
+from tensorflow.examples.tutorials.mnist import input_data	
 	
 MEL_FEATURE_AMOUNT = 13
 BLOCKS_IN_INPUT_FEATURE = 50
@@ -21,6 +22,8 @@ if USE_HDF5:
 
 class batchGenerator():
 	def __init__(self, MFCCFolderPath, labelFolderPath):
+		mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
+		print mnist.test.images.shape
 		self.MFCCFolderPath = MFCCFolderPath
 		self.labelFolderPath = labelFolderPath
 
