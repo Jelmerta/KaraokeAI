@@ -66,7 +66,6 @@ class batchGenerator():
 		batchIndex = 0
 		
 		while batchIndex < batchSize:
-			print ''
 			randomLabelFileName = random.choice(self.sets[0]) # Using training set here to get a batch
 			randomMFCCFileName = self.labelToMFCCFileName(randomLabelFileName)
 			if os.path.isfile(randomLabelFileName):
@@ -85,22 +84,15 @@ class batchGenerator():
 				labelFile = open(randomLabelFileName, "r+")
 				labelList = [char for char in labelFile.readline()]
 				
-				print MFCCMatrix.shape
 				if len(labelList) == 0 or MFCCMatrix.shape[0] == 0:
 					continue
 			
 				labelAmount = len(labelList)
 				matrixFrameAmount = MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE
-				print labelAmount
-				print matrixFrameAmount
-				
-				labelList and MFCCMatrix
 				
 				lowestAmount = min(labelAmount, matrixFrameAmount)
 				MFCCMatrix = MFCCMatrix[-lowestAmount*BLOCKS_IN_INPUT_FEATURE:]
 				labelList = labelList[-lowestAmount:]
-				print MFCCMatrix.shape
-				print len(labelList)
 				
 				randomLabelIndex = random.randint(0,lowestAmount-1)
 			
