@@ -23,5 +23,6 @@ def main():
 		
 	print "Created "+ str(correctCount) + " label files, out of " + str(fileCount) + " total cdg files."
 
+# Example call: python cdg2voicetimingFolder.py cdgpath outputpath interval
 if __name__ == "__main__":
     main()

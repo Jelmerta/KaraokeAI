@@ -83,9 +83,8 @@ class Sequence():
 	def classifyInstructions(self):
 		notSingingColorsList = self.colorList[::2]
 		singingColorsList = self.colorList[1::2]
-		
+
 		for instruction in self.instructionList:
-			lastIndex +=1
 			if(instruction.color in singingColorsList):
 				self.classifiedList.append(instruction.timing)
 		
