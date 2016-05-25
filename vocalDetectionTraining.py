@@ -36,8 +36,8 @@ def main():
 
 	y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	
-	cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))
-	#cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logit, y_))
+	#cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))
+	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
 	#cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-10, 1.0)))
 	# use one of these if doesn't work
 	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
@@ -49,11 +49,35 @@ def main():
 		batch = bg.getBatch(0, 64)
 		if i%100 == 0:
 			train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
-			print("step %d, training accuracy %g"%(i, train_accuracy))
+            loss = sess.run(cross_entropy, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.0})
+			print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, loss))
 		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
-
+		
+	
 	randomTestSet = bg.getBatch(1, 200) # multiple of the same data might be used, but doesn't matter since data is incredibly big
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
+	#saveNetwork()
+	
+# def saveNetwork():
+	# saver = tf.train.Saver(tf.all_variables())
+	
+	  # print("Model saved in file: %s" % save_path)
+	  
+# def loadNetwork():
+	# v1 = tf.Variable(..., name="v1")
+	# v2 = tf.Variable(..., name="v2")
+	...
+	# Add ops to save and restore all the variables.
+	# saver = tf.train.Saver()
+
+	# Later, launch the model, use the saver to restore variables from disk, and
+	# do some work with the model.
+	# with tf.Session() as sess:
+	  # Restore variables from disk.
+	  # saver.restore(sess, "/tmp/model.ckpt")
+	  # print("Model restored.")
+	  # Do some work with the model
+	  # ...
 	
 def weight_variable(shape):
 	initial = tf.truncated_normal(shape, stddev=0.1)
