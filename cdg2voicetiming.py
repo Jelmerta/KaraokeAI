@@ -178,7 +178,7 @@ class cdgPlayer:
 		print self.packetCount
 		i = 0
 		for packetIndex in range(self.packetCount - packetInterval/2 - 1, -1, -packetInterval):
-			print packetIndex
+#			print packetIndex
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
 			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue <= packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
