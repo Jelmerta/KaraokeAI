@@ -19,7 +19,7 @@ CDG_MASK 					= 0x3F
 
 CDG_PACKETS_PER_SECOND 		= 300
 
-DEBUG = 1
+DEBUG = 0
 		
 class Instruction():
 	def __init__(self, timing, x, y, color):
@@ -175,14 +175,13 @@ class cdgPlayer:
 	def getFeatureVector(self, classifiedInstructions, interval):
 		packetInterval = int(round(interval/1.0 * CDG_PACKETS_PER_SECOND))
 		featureVector = np.zeros((self.FileSize/24)/packetInterval, dtype=np.int)
-		print self.packetCount
 		i = 0
 		for packetIndex in range(self.packetCount - packetInterval/2 - 1, -1, -packetInterval):
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
 			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue <= packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
 			i += 1
-		return featureVector
+		return featureVector[::-1]
 	
 	def findClosestValue(self, myList, myNumber):
 		"""
