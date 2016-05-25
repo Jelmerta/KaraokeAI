@@ -66,7 +66,7 @@ def main():
 # def loadNetwork():
 	# v1 = tf.Variable(..., name="v1")
 	# v2 = tf.Variable(..., name="v2")
-	...
+	#...
 	# Add ops to save and restore all the variables.
 	# saver = tf.train.Saver()
 
