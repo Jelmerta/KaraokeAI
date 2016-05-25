@@ -99,19 +99,18 @@ class batchGenerator():
 			
 				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+BLOCKS_IN_INPUT_FEATURE].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
 				if(int(labelList[randomLabelIndex]) == 1):
-					randomBatch.outputFeature[batchIndex] = 1
+					randomBatch.outputFeature[batchIndex] = [1]
 				batchIndex += 1
 
 			elif(DEBUG):
 				print 'can\'t find MFCC file'
-		print randomBatch.inputFeature.shape
 		return randomBatch.inputFeature, randomBatch.outputFeature
 
 class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
 		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT * BLOCKS_IN_INPUT_FEATURE))
-		self.outputFeature = np.zeros(batchSize)
+		self.outputFeature = np.zeros((batchSize, 1))
 
 def main():
 	if (len(sys.argv) != 3):
