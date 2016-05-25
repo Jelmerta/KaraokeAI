@@ -45,8 +45,9 @@ def main():
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	sess.run(tf.initialize_all_variables()) #one of these init not ne
 	for i in range(1000):
+		print i
 		batch = bg.getBatch(0, 64)
-		if i%100 == 0:
+		if i%10 == 0:
 			train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			print("step %d, training accuracy %g"%(i, train_accuracy))
 		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
