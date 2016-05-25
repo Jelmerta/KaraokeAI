@@ -89,7 +89,7 @@ class batchGenerator():
 					continue
 			
 				labelAmount = len(labelList)
-				MatrixFrameAmount = MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE
+				matrixFrameAmount = MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE
 				print labelAmount
 				print matrixFrameAmount
 				
