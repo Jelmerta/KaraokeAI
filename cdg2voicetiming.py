@@ -19,7 +19,7 @@ CDG_MASK 					= 0x3F
 
 CDG_PACKETS_PER_SECOND 		= 300
 
-DEBUG = 0
+DEBUG = 1
 		
 class Instruction():
 	def __init__(self, timing, x, y, color):
