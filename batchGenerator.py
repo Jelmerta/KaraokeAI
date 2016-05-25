@@ -13,9 +13,9 @@ TRAIN_SPLIT = 0.7
 VALIDATION_SPLIT = 0.1
 TEST_SPLIT = 0.2
 
-DEBUG = 1
+DEBUG = 0
 
-USE_HDF5 = 0
+USE_HDF5 = 1
 if USE_HDF5:
 	import h5py
 
@@ -78,18 +78,25 @@ class batchGenerator():
 						MFCCMatrix = np.load(randomMFCCFileName)
 					
 				else:
-					if(DEBUG):
-						print 'can\'t find MFCC file'
+					print 'can\'t find MFCC file, continuing.'
 					continue
 			
 				labelFile = open(randomLabelFileName, "r+")
 				labelList = [char for char in labelFile.readline()]
 			
-				labelAmount = statinfo = os.stat(randomLabelFileName).st_size
-				print MFCCMatrix
-				print MFCCMatrix.shape
+				labelAmount = len(labelList)
+				MatrixFrameAmount = MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE
 				print labelAmount
-				print MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount
+				print matrixFrameAmount
+				
+				# if labelAmount > matrixFrameAmount:
+					# use all matrix
+				# else:
+					# use all labels
+				
+				while one of the lists is not empty
+				cmon man
+				
 				if abs(MFCCMatrix.shape[0]/BLOCKS_IN_INPUT_FEATURE - labelAmount) <= BLOCKS_IN_INPUT_FEATURE/2:
 					randomLabelIndex = random.randint(0,labelAmount-2)
 			

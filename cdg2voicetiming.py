@@ -22,8 +22,8 @@ CDG_PACKETS_PER_SECOND 		= 300
 DEBUG = 0
 		
 class Instruction():
-	def __init__(self, packetCount, x, y, color):
-		self.timing = packetCount
+	def __init__(self, timing, x, y, color):
+		self.timing = timing
 		self.x = x
 		self.y = y
 		self.color = color
@@ -38,6 +38,7 @@ class Sequence():
 		self.colorList = []
 		self.coordDict = {}
 		self.classifiedList = []
+		self.instructionPadding = 0
 		
 	def colorAmount(self):
 		return len(self.colorList)
@@ -82,9 +83,9 @@ class Sequence():
 	def classifyInstructions(self):
 		notSingingColorsList = self.colorList[::2]
 		singingColorsList = self.colorList[1::2]
-		sequencePacketCount = self.instructionList[-1].timing - self.instructionList[0].timing
 		
 		for instruction in self.instructionList:
+			lastIndex +=1
 			if(instruction.color in singingColorsList):
 				self.classifiedList.append(instruction.timing)
 		
@@ -129,7 +130,7 @@ class cdgPlayer:
 			writeFileName = list(self.outputFilePath) + list("/") + list(self.FileName[index+1:])
 			writeFileName[-3] = "l"
 			writeFileName[-2] = "b"
-			writeFileName[-1] = "l"
+			writeFileName[-1] = "2"
 			writeFileName = "".join(writeFileName)
 			if(not os.path.isfile(writeFileName)):
 				sequence = self.cdgGetNextSequence()
@@ -139,13 +140,14 @@ class cdgPlayer:
 						if(sequence.containsVocals()):
 							self.vocalSequenceCount = self.vocalSequenceCount + 1
 							allClassifiedInstructions = np.append(allClassifiedInstructions, sequence.classifyInstructions())
+							
 					else:
 						print 'empty sequence'
 					self.sequenceCount = self.sequenceCount + 1
 				else:
 					self.cdgFile.close()
 					if len(allClassifiedInstructions) > 0.2*self.FileSize/24/(CDG_PACKETS_PER_SECOND*self.interval):
-						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval)
+						featureVector = self.getFeatureVector(allClassifiedInstructions, self.interval, lastEndPadding)
 				
 						self.writeToFile(writeFileName, featureVector)					
 						
@@ -171,11 +173,12 @@ class cdgPlayer:
  		statinfo = os.stat(self.FileName)
 		return statinfo.st_size
 			
-	def getFeatureVector(self, classifiedInstructions, interval):
+	def getFeatureVector(self, classifiedInstructions, interval, endPadding):
 		packetInterval = int(round(interval/1.0 * CDG_PACKETS_PER_SECOND))
 		featureVector = np.zeros((self.FileSize/24)/packetInterval, dtype=np.int)
-		for i in range(len(featureVector)):
-			packetIndex = i * packetInterval + packetInterval/2
+		print self.packetCount
+		for packetIndex in range(self.packetCount - packetInterval/2 - 1, -1, -packetInterval):
+			print packetIndex
 			closestValue = self.findClosestValue(classifiedInstructions, packetIndex)
 			if (closestValue >= packetIndex - packetInterval / 2) and (closestValue <= packetIndex + packetInterval / 2 - 1):
 				featureVector[i] = 1
@@ -201,13 +204,6 @@ class cdgPlayer:
 	
 	def instructionsClose(self, instruction1, instruction2):
 		if(math.fabs(instruction1.x - instruction2.x) <=1 and fabs(instruction1.y - instruction2.y) <= 2 and instruction1.color == instruction2.color):
-			return True
-		else:
-			return False
-			
-	def instructionNextLine(self, instruction1, instruction2):
-		if(instruction1.x - instruction2.x > 15 and instruction2.y - instruction1.y >= 0 and instruction2.y - instruction1.y < 3 and instruction1.color == instruction2.color): 
-		# y difference is often 1, less like 0 or 2, not sure if ever 3, x difference is often quite high, 15 seems too low but is also safe to not throw away correct ones
 			return True
 		else:
 			return False
@@ -266,7 +262,7 @@ class cdgPlayer:
 					if(not color in sequence.colorList):
 						sequence.colorList.append(color)
 					
-					sequence.instructionList.append(Instruction(self.packetCount, x, y, color))
+					sequence.instructionList.append(Instruction(self.packetCount-1, x, y, color))
 					self.amountOfInstructions = self.amountOfInstructions + 1
 			else:
 				if len(sequence.instructionList) == 0:

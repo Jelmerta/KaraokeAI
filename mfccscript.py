@@ -5,13 +5,14 @@ from yaafelib import *
 import os
 import sys
 import numpy as np
-from mutagen.mp3 import MP3
 
 USE_HDF5 = 1
 if USE_HDF5:
 	import h5py
 	
 DEBUG = 0
+if DEBUG:
+	from mutagen.mp3 import MP3
 
 '''Parameters are :
 - CepsIgnoreFirstCoeff (default=1): 0 means to keep the first cepstral coeffcient, 1 means to ignore it
@@ -34,7 +35,7 @@ DEBUG = 0
 
 def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 	fp = FeaturePlan(sample_rate=sampleRate)
-	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
+	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFre	q) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
 	
@@ -63,7 +64,7 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			
 			feats = engine.readAllOutputs()
 			if feats['mfcc'].shape[0] == 0:
-				print 'aborting, empty'
+				print 'Since no feature has been found, no mfcc file has been created.'
 				continue
 			
 			if(USE_HDF5):
