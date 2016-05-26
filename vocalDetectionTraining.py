@@ -59,7 +59,7 @@ def main():
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
 	saveNetwork(sess)
 	
- def saveNetwork(sess):
+def saveNetwork(sess):
 	saver.save(sess, "./model.ckpt")
 	  
 def loadNetwork():
