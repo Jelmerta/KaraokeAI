@@ -48,7 +48,7 @@ def main():
 	for i in range(2000):
 		print i
 		batch = bg.getBatch(0, 64)	
-		if i%10 == 0:
+		if i%100 == 0:
 			#train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})			
 			train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			train_loss = sess.run(cross_entropy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
