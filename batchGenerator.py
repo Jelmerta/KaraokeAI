@@ -99,9 +99,9 @@ class batchGenerator():
 			
 				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+BLOCKS_IN_INPUT_FEATURE].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
 				if(int(labelList[randomLabelIndex]) == 0):
-					randomBatch.outputFeature[batchIndex, 0] = [1]
+					randomBatch.outputFeature[batchIndex, 0] = 1
 				elif(int(labelList[randomLabelIndex]) == 1):
-					randomBatch.outputFeature[batchIndex, 1] = [1]
+					randomBatch.outputFeature[batchIndex, 1] = 1
 				else:
 					print 'wrong label?'
 					
