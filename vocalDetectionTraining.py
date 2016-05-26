@@ -45,7 +45,7 @@ def main():
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	saver = tf.train.Saver()
 	sess.run(tf.initialize_all_variables())
-	for i in range(30):
+	for i in range(10):
 		print i
 		batch = bg.getBatch(0, 64)	
 		if i%10 == 0:
@@ -57,9 +57,9 @@ def main():
 	
 	randomTestSet = bg.getBatch(1, 5) # multiple of the same data might be used, but doesn't matter since data is incredibly big
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
-	saveNetwork(sess)
+	saveNetwork(saver, sess)
 	
-def saveNetwork(sess):
+def saveNetwork(saver, sess):
 	saver.save(sess, "./model.ckpt")
 	  
 def loadNetwork():
