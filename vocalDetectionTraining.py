@@ -43,13 +43,13 @@ def main():
 	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+	saver = tf.train.Saver()
 	sess.run(tf.initialize_all_variables())
 	for i in range(1000):
 		print i
 		batch = bg.getBatch(0, 64)	
 		if i%10 == 0:
-			#train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
-			
+			#train_accuracy = accuracy.eval(feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})			
 			train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			train_loss = sess.run(cross_entropy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
 			print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
@@ -57,28 +57,13 @@ def main():
 	
 	randomTestSet = bg.getBatch(1, 200) # multiple of the same data might be used, but doesn't matter since data is incredibly big
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
-	#saveNetwork()
+	saveNetwork(sess)
 	
-# def saveNetwork():
-	# saver = tf.train.Saver(tf.all_variables())
-	
-	  # print("Model saved in file: %s" % save_path)
+ def saveNetwork(sess):
+	saver.save(sess, "./model.ckpt")
 	  
-# def loadNetwork():
-	# v1 = tf.Variable(..., name="v1")
-	# v2 = tf.Variable(..., name="v2")
-	#...
-	# Add ops to save and restore all the variables.
-	# saver = tf.train.Saver()
-
-	# Later, launch the model, use the saver to restore variables from disk, and
-	# do some work with the model.
-	# with tf.Session() as sess:
-	  # Restore variables from disk.
-	  # saver.restore(sess, "/tmp/model.ckpt")
-	  # print("Model restored.")
-	  # Do some work with the model
-	  # ...
+def loadNetwork():
+	saver.restore(sess, "/tmp/model.ckpt")
 	
 def weight_variable(shape):
 	initial = tf.truncated_normal(shape, stddev=0.1)

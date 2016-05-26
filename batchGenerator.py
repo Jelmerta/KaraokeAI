@@ -98,8 +98,13 @@ class batchGenerator():
 				randomLabelIndex = random.randint(0,lowestAmount-1)
 			
 				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomLabelIndex*BLOCKS_IN_INPUT_FEATURE:randomLabelIndex*BLOCKS_IN_INPUT_FEATURE+BLOCKS_IN_INPUT_FEATURE].reshape((1,BLOCKS_IN_INPUT_FEATURE*MEL_FEATURE_AMOUNT))
-				if(int(labelList[randomLabelIndex]) == 1):
-					randomBatch.outputFeature[batchIndex] = [1]
+				if(int(labelList[randomLabelIndex]) == 0):
+					randomBatch.outputFeature[batchIndex, 0] = [1]
+				elif(int(labelList[randomLabelIndex]) == 1):
+					randomBatch.outputFeature[batchIndex, 1] = [1]
+				else:
+					print 'wrong label?'
+					
 				batchIndex += 1
 
 			elif(DEBUG):
@@ -110,7 +115,7 @@ class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
 		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT * BLOCKS_IN_INPUT_FEATURE))
-		self.outputFeature = np.zeros((batchSize, 1))
+		self.outputFeature = np.zeros((batchSize, 2))
 
 def main():
 	if (len(sys.argv) != 3):
