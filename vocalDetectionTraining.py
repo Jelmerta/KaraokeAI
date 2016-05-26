@@ -11,7 +11,7 @@ def main():
 	W_conv1 = weight_variable([5, 5, 1, 32])
 	b_conv1 = bias_variable([32])
 	
-	x_image = tf.reshape(x, [-1,50,13,1]) # (could be 50/13)
+	x_image = tf.reshape(x, [-1,13, 50,1]) # (could be 50/13)
 	
 	h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 	h_pool1 = max_pool_2x2(h_conv1)
@@ -40,7 +40,7 @@ def main():
 	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
 	#cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-10, 1.0)))
 	# use one of these if doesn't work
-	train_step = tf.train.AdamOptimizer(1e-10).minimize(cross_entropy)
+	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	saver = tf.train.Saver()
