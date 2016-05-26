@@ -40,7 +40,7 @@ def main():
 	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
 	#cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-10, 1.0)))
 	# use one of these if doesn't work
-	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+	train_step = tf.train.AdamOptimizer(1e-10).minimize(cross_entropy)
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	saver = tf.train.Saver()
