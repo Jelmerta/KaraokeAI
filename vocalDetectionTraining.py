@@ -36,8 +36,8 @@ def main():
 
 	y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	
-	cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))
-	#cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
+	#cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))
+	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
 	#cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-10, 1.0)))
 	# use one of these if doesn't work
 	train_step = tf.train.AdamOptimizer(1e-5).minimize(cross_entropy)
@@ -45,7 +45,7 @@ def main():
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	saver = tf.train.Saver()
 	sess.run(tf.initialize_all_variables())
-	for i in range(10):
+	for i in range(100):
 		print i
 		batch = bg.getBatch(0, 64)	
 		if i%2 == 0:
@@ -54,7 +54,7 @@ def main():
 			print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
 		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
 	
-	randomTestSet = bg.getBatch(1, 3) # multiple of the same data might be used, but doesn't matter since data is incredibly big
+	randomTestSet = bg.getBatch(1, 20) # multiple of the same data might be used, but doesn't matter since data is incredibly big
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
 	saveNetwork(saver, sess)
 	
