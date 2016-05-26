@@ -6,7 +6,7 @@ def main():
 	bg = batchGenerator.batchGenerator("../features/input", "../features/output")
 	
 	x = tf.placeholder(tf.float32, shape=[None, 650])
-	y_ = tf.placeholder(tf.float32, shape=[None, 1])
+	y_ = tf.placeholder(tf.float32, shape=[None, 2])
 	
 	W_conv1 = weight_variable([5, 5, 1, 32])
 	b_conv1 = bias_variable([32])
@@ -31,8 +31,8 @@ def main():
 	keep_prob = tf.placeholder(tf.float32)
 	h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 	
-	W_fc2 = weight_variable([1024, 1])
-	b_fc2 = bias_variable([1])
+	W_fc2 = weight_variable([1024, 2])
+	b_fc2 = bias_variable([2])
 
 	y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	
@@ -45,7 +45,7 @@ def main():
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	saver = tf.train.Saver()
 	sess.run(tf.initialize_all_variables())
-	for i in range(1000):
+	for i in range(30):
 		print i
 		batch = bg.getBatch(0, 64)	
 		if i%10 == 0:
@@ -55,7 +55,7 @@ def main():
 			print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
 		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
 	
-	randomTestSet = bg.getBatch(1, 200) # multiple of the same data might be used, but doesn't matter since data is incredibly big
+	randomTestSet = bg.getBatch(1, 5) # multiple of the same data might be used, but doesn't matter since data is incredibly big
 	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
 	saveNetwork(sess)
 	
