@@ -6,9 +6,7 @@ import os
 import sys
 import numpy as np
 
-USE_HDF5 = 1
-if USE_HDF5:
-	import h5py
+import h5py
 	
 DEBUG = 0
 if DEBUG:
@@ -35,7 +33,7 @@ if DEBUG:
 
 def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 	fp = FeaturePlan(sample_rate=sampleRate)
-	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
+	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " CepsNbCoeffs=30" + " MelNbFilters=30" + " CepsIgnoreFirstCoeff=0" + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
 	
@@ -45,17 +43,12 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 	
 	afp = AudioFileProcessor()
 
-	for file in glob.glob(folderPath + "/*.ogg"):
+	for file in glob.glob(folderPath + "/*.wav"):
 		index = file.rfind("/")
 		mfccFileName = list(outputPath) + list("/") + list(file[index+1:])
-		if USE_HDF5:
-			mfccFileName[-3] = 'h'
-			mfccFileName[-2] = '5'
-			mfccFileName[-1] = ''
-		else:
-			mfccFileName[-3] = 'n'
-			mfccFileName[-2] = 'p'
-			mfccFileName[-1] = 'y'
+		mfccFileName[-3] = 'h'
+		mfccFileName[-2] = '5'
+		mfccFileName[-1] = ''
 		mfccFileName = "".join(mfccFileName).replace('_', ' - ')
 		
 		if not os.path.isfile(mfccFileName):
@@ -63,43 +56,16 @@ def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, s
 			afp.processFile(engine, file)
 			
 			feats = engine.readAllOutputs()
+			print ''
+			print mfccFileName
+			print feats['mfcc'].shape
 			if feats['mfcc'].shape[0] == 0:
 				print 'Since no feature has been found, no mfcc file has been created.'
 				continue
-			
-			if(USE_HDF5):
-				h5f = h5py.File(mfccFileName, 'w')
-				h5f.create_dataset('mfcc', data=feats['mfcc'])
-				h5f.close()
-			else:
-				np.save(mfccFileName, feats['mfcc'])
-			
-			if DEBUG:
-				print feats['mfcc'].shape
-			
-				labelFile = list('../features/output/') + list(file[index+1:])
-				labelFile[-3] = 'l'
-				labelFile[-2] = 'b'
-				labelFile[-1] = 'l'
-				labelFile = "".join(labelFile).replace('_', ' - ')
-				print labelFile
-				
-				cdgFile = list('../data/Karaoke/cdg/') + list(file[index+1:])
-				cdgFile[-3] = 'c'
-				cdgFile[-2] = 'd'
-				cdgFile[-1] = 'g'
-				cdgFile = "".join(cdgFile).replace('_', ' - ')
-				print cdgFile
-				
-				if os.path.isfile(labelFile):
-					statinfo = os.stat(cdgFile)
-					print 'cdg size: ' + str(statinfo.st_size)
-					
-					seconds = getFileSize(labelFile) / 10.0
-					print seconds
-					
-					audio = MP3(file)
-					print audio.info.length
+		
+			h5f = h5py.File(mfccFileName, 'w')
+			h5f.create_dataset('mfcc', data=feats['mfcc'])
+			h5f.close()
 			
 		else:
 			print 'MFCC File already exists. Continuing.'

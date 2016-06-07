@@ -6,9 +6,9 @@ import sys
 import random
 import numpy as np
 	
-MEL_FEATURE_AMOUNT = 13
-BLOCKS_IN_WINDOW = 16
-WINDOW_DURATION = 32
+MEL_FEATURE_AMOUNT = 30
+BLOCKS_IN_WINDOW = 8
+WINDOW_DURATION = 0.2
 
 DEBUG = 0
 
@@ -61,13 +61,23 @@ class batchGenerator():
 						print 'can\'t find MFCC file, continuing.'
 					continue
 				
-				matrixIndexAmount = MFCCMatrix.shape[0]/(BLOCKS_IN_WINDOW / 2)
-				randomWindowIndex = random.randint(0, matrixIndexAmount-2)
+				matrixIndexAmount = MFCCMatrix.shape[0]/(BLOCKS_IN_WINDOW)
+				randomWindowIndex = random.randint(2, matrixIndexAmount-3)
 
-				indexSeconds = randomWindowIndex * (WINDOW_DURATION / 1000.0) + (WINDOW_DURATION/1000.0/2)
-				label = self.getLabel(randomLabelFileName, indexSeconds)
-
-				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomWindowIndex*(BLOCKS_IN_WINDOW/2):randomWindowIndex*(BLOCKS_IN_WINDOW/2)+BLOCKS_IN_WINDOW].reshape((1,BLOCKS_IN_WINDOW*MEL_FEATURE_AMOUNT))
+				#print ''
+				#print randomLabelFileName
+				#print MFCCMatrix.shape
+				#print randomWindowIndex*(BLOCKS_IN_WINDOW/2)
+				#print indexSeconds
+				#print self.getLabel(randomLabelFileName, indexSeconds)
+				#print MFCCMatrix[randomWindowIndex*(BLOCKS_IN_WINDOW)-2*BLOCKS_IN_WINDOW:randomWindowIndex*(BLOCKS_IN_WINDOW)+3*BLOCKS_IN_WINDOW].shape
+				randomBatch.inputFeature[batchIndex] = MFCCMatrix[randomWindowIndex*(BLOCKS_IN_WINDOW)-2*BLOCKS_IN_WINDOW:randomWindowIndex*(BLOCKS_IN_WINDOW)+3*BLOCKS_IN_WINDOW].reshape((1,5*BLOCKS_IN_WINDOW*MEL_FEATURE_AMOUNT))
+				
+				indexSeconds = randomWindowIndex * WINDOW_DURATION + WINDOW_DURATION/2
+				#print ''
+				#print randomWindowIndex
+				#print self.getLabel(randomLabelFileName, indexSeconds)
+				#print indexSeconds
 				if self.getLabel(randomLabelFileName, indexSeconds) == 0:
 					randomBatch.outputFeature[batchIndex, 0] = 1					
 				else:
@@ -82,7 +92,7 @@ class batchGenerator():
 class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
-		self.inputFeature = np.zeros((batchSize, MEL_FEATURE_AMOUNT * BLOCKS_IN_WINDOW))
+		self.inputFeature = np.zeros((batchSize, 5*MEL_FEATURE_AMOUNT * BLOCKS_IN_WINDOW))
 		self.outputFeature = np.zeros((batchSize, 2))
 
 def main():

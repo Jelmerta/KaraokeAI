@@ -1,17 +1,19 @@
 import batchGenerator 
 import tensorflow as tf
+import numpy as np
+import sys
 
 def main():
 	sess = tf.InteractiveSession()
 	bg = batchGenerator.batchGenerator("train/features/", "jamendo_lab")
 	
-	x = tf.placeholder(tf.float32, shape=[None, 208])
+	x = tf.placeholder(tf.float32, shape=[None, 1200])
 	y_ = tf.placeholder(tf.float32, shape=[None, 2])
 	
 	W_conv1 = weight_variable([5, 5, 1, 32])
 	b_conv1 = bias_variable([32])
 	
-	x_image = tf.reshape(x, [-1,16,13,1])
+	x_image = tf.reshape(x, [-1,40,30,1])
 	
 	h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 	h_pool1 = max_pool_2x2(h_conv1)
@@ -22,11 +24,19 @@ def main():
 	h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
 	h_pool2 = max_pool_2x2(h_conv2)
 	
-	W_fc1 = weight_variable([4 * 4 * 64, 1024])
+	W_fc1 = weight_variable([10 * 8 * 64, 1024])
 	b_fc1 = bias_variable([1024])
 
-	h_pool2_flat = tf.reshape(h_pool2, [-1, 4*4*64])
+	h_pool2_flat = tf.reshape(h_pool2, [-1, 10*8*64])
 	h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+
+	#keep_prob = tf.placeholder(tf.float32)
+	#h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+	
+	#W_fc2 = weight_variable([1024, 2])
+	#b_fc2 = bias_variable([2])
+
+	#y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	
 	keep_prob = tf.placeholder(tf.float32)
 	h_fc2_drop = tf.nn.dropout(h_fc1, keep_prob)
@@ -34,7 +44,6 @@ def main():
 	W_fc2 = weight_variable([1024, 2])
 	b_fc2 = bias_variable([2])
 
-	#h_pool2_flatter = tf.reshape(h_pool2_flat, [-1, 1024])
 	h_fc2 = tf.nn.relu(tf.matmul(h_fc2_drop, W_fc2) + b_fc2)
 
 	W_fc3 = weight_variable([2, 2])
@@ -42,35 +51,45 @@ def main():
 	
 	y_conv=tf.nn.softmax(tf.matmul(h_fc2, W_fc3) + b_fc3)
 	
-	#add dense with 1 unit?
 	#cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))
 	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
 	#cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-10, 1.0)))
 	# use one of these if doesn't work
-	train_step = tf.train.AdamOptimizer(1e-5).minimize(cross_entropy)
+	train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-	saver = tf.train.Saver()
+	prediction = tf.argmax(y_conv, 1)
+
 	sess.run(tf.initialize_all_variables())
-	for i in range(2000):
-		print i
-		batch = bg.getBatch(64)
-		if i%2 == 0:
-			train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
-			train_loss = sess.run(cross_entropy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
-			print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
-		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+	saver = tf.train.Saver()
+
+	args = sys.argv[1:]
+	if int(args[0]) == 1:
+		loadNetwork(saver, sess)
+
+	if int(args[0]) != 1:
+		for i in range(20000):
+			batch = bg.getBatch(64)
+			if i%100 == 0:
+				train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
+				train_loss = sess.run(cross_entropy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
+				print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
+			train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+		saveNetwork(saver, sess)
+	else:
+		bg = batchGenerator.batchGenerator("test/features/", "jamendo_lab")
+		testSet = bg.getBatch(200)
 	
-	bg = batchGenerator.batchGenerator("test/features/", "jamendo_lab")
-	randomTestSet = bg.getBatch(200) # multiple of the same data might be used, but doesn't matter since data is incredibly big
-	print("test accuracy %g"%accuracy.eval(feed_dict={x: randomTestSet[0], y_: randomTestSet[1], keep_prob: 1.0}))
-	saveNetwork(saver, sess)
+		np.set_printoptions(threshold=np.nan)
+		print prediction.eval(feed_dict={x: testSet[0], y_: testSet[1], keep_prob: 1.0})
+		print("test accuracy %g"%accuracy.eval(feed_dict={x: testSet[0], y_: testSet[1], keep_prob: 1.0}))
+	
 	
 def saveNetwork(saver, sess):
-	saver.save(sess, "./model.ckpt")
+	saver.save(sess, "/tmp/model3.ckpt")
 	  
-def loadNetwork():
-	saver.restore(sess, "/tmp/model.ckpt")
+def loadNetwork(saver, sess):
+	saver.restore(sess, "model2.ckpt")
 	
 def weight_variable(shape):
 	initial = tf.truncated_normal(shape, stddev=0.1)
