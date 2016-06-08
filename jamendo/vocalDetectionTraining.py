@@ -1,11 +1,22 @@
-import batchGenerator 
 import tensorflow as tf
 import numpy as np
 import sys
 
+RANDOM_TRAINING = False
+LOOPAMOUNT = 10
+
+if RANDOM_TRAINING:
+	import batchGenerator
+else:
+	import staticBatchGenerator
+	import songBatchGenerator 
+
 def main():
 	sess = tf.InteractiveSession()
-	bg = batchGenerator.batchGenerator("train/features/", "jamendo_lab")
+	if RANDOM_TRAINING:
+		bg = batchGenerator.batchGenerator("train/features/", "jamendo_lab")	
+	else:
+		staticbg = staticBatchGenerator.staticBatchGenerator("train/features/", "jamendo_lab")
 	
 	x = tf.placeholder(tf.float32, shape=[None, 1200])
 	y_ = tf.placeholder(tf.float32, shape=[None, 2])
@@ -39,17 +50,19 @@ def main():
 	#y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 	
 	keep_prob = tf.placeholder(tf.float32)
-	h_fc2_drop = tf.nn.dropout(h_fc1, keep_prob)
+	h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 	
 	W_fc2 = weight_variable([1024, 2])
 	b_fc2 = bias_variable([2])
 
-	h_fc2 = tf.nn.relu(tf.matmul(h_fc2_drop, W_fc2) + b_fc2)
+	h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+
+	h_fc2_drop = tf.nn.dropout(h_fc2, keep_prob)
 
 	W_fc3 = weight_variable([2, 2])
 	b_fc3 = bias_variable([2])
 	
-	y_conv=tf.nn.softmax(tf.matmul(h_fc2, W_fc3) + b_fc3)
+	y_conv=tf.nn.softmax(tf.matmul(h_fc2_drop, W_fc3) + b_fc3)
 	
 	#cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))
 	cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
@@ -59,6 +72,7 @@ def main():
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	prediction = tf.argmax(y_conv, 1)
+	#prediction = y_conv[:,1]
 
 	sess.run(tf.initialize_all_variables())
 	saver = tf.train.Saver()
@@ -67,23 +81,47 @@ def main():
 	if int(args[0]) == 1:
 		loadNetwork(saver, sess)
 
-	if int(args[0]) != 1:
-		for i in range(20000):
-			batch = bg.getBatch(64)
-			if i%100 == 0:
-				train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
-				train_loss = sess.run(cross_entropy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
-				print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
-			train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+	if int(args[0]) != 1: # Training
+		if RANDOM_TRAINING:
+			for i in range(20000):
+				batch = bg.getBatch(64)
+				if i%100 == 0:
+		 			train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
+					train_loss = sess.run(cross_entropy, feed_dict={x:batch[0], y_: batch[1], keep_prob: 1.0})
+					print("step %d, training accuracy %g, loss %g"%(i, train_accuracy, train_loss))
+				train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+		else: # Static training (way faster and ensures that all data in training set gets used)
+			input, output = staticbg.getSet()
+
+			i = 0
+			loopCount = 0
+			while i < input.shape[0] - 64:
+				if i%100 == 0:
+					train_accuracy = sess.run(accuracy, feed_dict={x:input[i:i+64], y_: output[i:i+64], keep_prob: 1.0})
+					train_loss = sess.run(cross_entropy, feed_dict={x:input[i:i+64], y_: output[i:i+64], keep_prob: 1.0})
+					print("loop %d, step %d, training accuracy %g, loss %g"%(loopCount+1, i, train_accuracy, train_loss))
+				train_step.run(feed_dict={x: input[i:i+64], y_: output[i:i+64], keep_prob: 0.5})
+				i += 64
+			
+				if i >= input.shape[0] - 64:
+					if loopCount < LOOPAMOUNT:
+						p = np.random.permutation(len(input))
+						input = input[p]
+						output = output[p]
+						loopCount += 1
+						i = 0
+					else:
+						break
 		saveNetwork(saver, sess)
-	else:
-		bg = batchGenerator.batchGenerator("test/features/", "jamendo_lab")
-		testSet = bg.getBatch(200)
+	else: # Testing		
+		sbg = songBatchGenerator.songBatchGenerator("test/features/03 - castaway.h5", "jamendo_lab/03 - castaway.lab")
+		songBatch = sbg.getBatch()
+		print songBatch[0].shape
+		print songBatch[1].shape
 	
 		np.set_printoptions(threshold=np.nan)
-		print prediction.eval(feed_dict={x: testSet[0], y_: testSet[1], keep_prob: 1.0})
-		print("test accuracy %g"%accuracy.eval(feed_dict={x: testSet[0], y_: testSet[1], keep_prob: 1.0}))
-	
+		print prediction.eval(feed_dict={x: songBatch[0], y_: songBatch[1], keep_prob: 1.0})
+		print("test accuracy %g"%accuracy.eval(feed_dict={x: songBatch[0], y_: songBatch[1], keep_prob: 1.0}))
 	
 def saveNetwork(saver, sess):
 	saver.save(sess, "/tmp/model3.ckpt")
