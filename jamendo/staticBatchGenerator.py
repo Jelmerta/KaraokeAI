@@ -23,7 +23,6 @@ class staticBatchGenerator():
 	
 	def getMFCCFiles(self):
 		self.MFCCFileNames = glob.glob(self.MFCCFolderPath + "/*h5")
-		random.shuffle(self.MFCCFileNames)
 	
 	def MFCCToLabelFileName(self, MFCCFileName):
 		index = MFCCFileName.rfind("/")
