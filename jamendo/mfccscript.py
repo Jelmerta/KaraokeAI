@@ -33,7 +33,7 @@ if DEBUG:
 
 def mfccMaker(folderPath, outputPath, sampleRate, minFreq, maxFreq, blockSize, stepSize):
 	fp = FeaturePlan(sample_rate=sampleRate)
-	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " CepsNbCoeffs=30" + " MelNbFilters=30" + " CepsIgnoreFirstCoeff=0" + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
+	fp.addFeature("mfcc: MFCC MelMinFreq=" + str(minFreq) + " MelMaxFreq=" +str(maxFreq) + " CepsNbCoeffs=40" + " MelNbFilters=80" + " CepsIgnoreFirstCoeff=0" + " blockSize=" + str(blockSize) + " stepSize=" + str(stepSize) + "\"")
 	
 	df = fp.getDataFlow()
 	

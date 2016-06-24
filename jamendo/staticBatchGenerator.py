@@ -6,10 +6,6 @@ import sys
 import numpy as np
 import glob
 import random
-	
-MEL_FEATURE_AMOUNT = 30
-BLOCKS_IN_WINDOW = 8
-WINDOW_DURATION = 0.2
 
 DEBUG = 1
 
@@ -46,6 +42,8 @@ class staticBatchGenerator():
 				input = np.append(input, songBatch[0], axis=0)
 				output = np.append(output, songBatch[1], axis=0)
 
+		print input.shape
+		print output.shape
 		p = np.random.permutation(len(input))
 		return input[p], output[p]
 

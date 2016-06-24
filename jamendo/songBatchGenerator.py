@@ -4,8 +4,8 @@ import os
 import sys
 import numpy as np
 	
-MEL_FEATURE_AMOUNT = 30
-BLOCKS_IN_WINDOW = 8
+MEL_FEATURE_AMOUNT = 40
+BLOCKS_IN_WINDOW = 12
 WINDOW_DURATION = 0.2
 
 DEBUG = 1
@@ -40,8 +40,8 @@ class songBatchGenerator():
 			matrixIndexAmount = MFCCMatrix.shape[0]/(BLOCKS_IN_WINDOW)		
 			songBatch = batch(matrixIndexAmount-5)
 
-			for i in range(2, matrixIndexAmount-3):
-				songBatch.inputFeature[i-2] = MFCCMatrix[i*(BLOCKS_IN_WINDOW)-2*BLOCKS_IN_WINDOW:i*(BLOCKS_IN_WINDOW)+3*BLOCKS_IN_WINDOW].reshape((1,5*BLOCKS_IN_WINDOW*MEL_FEATURE_AMOUNT))
+			for i in range(3, matrixIndexAmount-4):
+				songBatch.inputFeature[i-3] = MFCCMatrix[i*(BLOCKS_IN_WINDOW)-3*BLOCKS_IN_WINDOW:i*(BLOCKS_IN_WINDOW)+4*BLOCKS_IN_WINDOW].reshape((1,7*BLOCKS_IN_WINDOW*MEL_FEATURE_AMOUNT))
 			
 				indexSeconds = i * WINDOW_DURATION + WINDOW_DURATION/2
 
@@ -56,7 +56,7 @@ class songBatchGenerator():
 class batch():
 	def __init__(self, batchSize):
 		self.batchSize = batchSize
-		self.inputFeature = np.zeros((batchSize, 5*MEL_FEATURE_AMOUNT * BLOCKS_IN_WINDOW))
+		self.inputFeature = np.zeros((batchSize, 7*MEL_FEATURE_AMOUNT * BLOCKS_IN_WINDOW))
 		self.outputFeature = np.zeros((batchSize, 2))
 
 def main():
@@ -67,7 +67,12 @@ def main():
 	MFCCFilePath = sys.argv[1]
 	labelFilePath = sys.argv[2]
 
-	return songBatchGenerator(MFCCFilePath, labelFilePath)
+	sbg = songBatchGenerator(MFCCFilePath, labelFilePath)
+	batch = sbg.getBatch()
+	print batch[0].shape
+	print batch[1].shape
+
+	sys.exit(0)
 
 if __name__ == "__main__":
 	main()
